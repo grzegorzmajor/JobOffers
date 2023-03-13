@@ -12,6 +12,6 @@ public class LoginFacade {
     public User findByUsername(String username) {
         return usersRepository.findByUsername(username)
                 .map(user -> new User(user.id(), user.name(), user.password()))
-                .orElseThrow();
+                .orElseThrow( () -> new UserNotFoundException(USER_NOT_FOUND));
     }
 }
