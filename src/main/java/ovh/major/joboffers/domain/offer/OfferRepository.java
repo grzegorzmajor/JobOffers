@@ -5,16 +5,16 @@ import java.util.Optional;
 
 public interface OfferRepository {
 
-    public Optional<List<Offer>> findAllOffers();
+    Optional<List<Offer>> findAllOffers();
 
-    public Optional<Offer> findOfferById(String id);
+    Optional<Offer> findOfferById(String id);
 
-    public Offer save(Offer offer);
+    Offer save(Offer offer);
 
-    public boolean fetchAllOffersAndSaveAllIfNoExists();
+    boolean fetchAllOffersAndSaveAllIfNoExists();
 
-    public void deleteAll();
+    void deleteAll();
 
-    public void deleteOfferById(String id);
+    void deleteOfferById(String id);
 
 }
