@@ -12,7 +12,9 @@ public class UsersRepositoryForTests implements UsersRepository {
     List<User> usersList = new ArrayList<>();
     @Override
     public Optional<User> findByUsername(String username) {
-        return usersList.stream().filter(user -> username.equals(user.name())).findFirst();
+        return usersList.stream()
+                .filter(user -> username.equals(user.name()))
+                .findFirst();
     }
 
     @Override

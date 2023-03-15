@@ -17,15 +17,14 @@ public class OfferFacade {
     }
 
     List<OfferDto> findAllOffers() {
-        List<Offer> offers = offerRepository.findAllOffers()
-                .orElseThrow(() -> new OfferNotFoundException(OFFER_NOT_FOUND));
+        List<Offer> offers = offerRepository.findAllOffers();
         return offers.stream()
                 .map(offer -> new OfferDto(offer.title(),offer.company(),offer.salary(),offer.offerUrl()))
                 .toList();
     }
 
-    OfferDto findOfferById(String id){
-        return offerRepository.findOfferById(id)
+    OfferDto findOfferByUrl(String url){
+        return offerRepository.findOfferByUrl(url)
                 .map(offer -> new OfferDto(offer.title(),offer.company(),offer.salary(),offer.offerUrl()))
                 .orElseThrow(() -> new OfferNotFoundException(OFFER_NOT_FOUND));
     }
@@ -51,8 +50,8 @@ public class OfferFacade {
         offerRepository.deleteAll();
     }
 
-    void deleteOfferById(String id) {
-        offerRepository.deleteOfferById(id);
+    void deleteOfferByUrl(String url) {
+        offerRepository.deleteOfferByUrl(url);
     }
 
 }

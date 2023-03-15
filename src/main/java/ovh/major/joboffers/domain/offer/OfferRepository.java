@@ -5,9 +5,9 @@ import java.util.Optional;
 
 public interface OfferRepository {
 
-    Optional<List<Offer>> findAllOffers();
+    List<Offer> findAllOffers();
 
-    Optional<Offer> findOfferById(String id);
+    Optional<Offer> findOfferByUrl(String url);
 
     Offer save(Offer offer);
 
@@ -15,7 +15,7 @@ public interface OfferRepository {
 
     void deleteAll();
 
-    void deleteOfferById(String id);
+    void deleteOfferByUrl(String url);
 
     int size();
 
