@@ -1,5 +1,9 @@
 package ovh.major.joboffers.domain.loginandregister;
 
+import ovh.major.joboffers.domain.loginandregister.dto.RegisterUserDto;
+import ovh.major.joboffers.domain.loginandregister.dto.RegistrationResultDto;
+import ovh.major.joboffers.domain.loginandregister.dto.UserDto;
+
 public class LoginAndRegisterFacade {
 
     private static final String USER_NOT_FOUND = "User not found!";
@@ -10,18 +14,18 @@ public class LoginAndRegisterFacade {
         this.usersRepository = usersRepository;
     }
 
-    public User findByUsername(String username) {
+    public UserDto findByUsername(String username) {
         return usersRepository.findByUsername(username)
-                .map(user -> new User(user.id(), user.name(), user.password()))
+                .map(user -> new UserDto(user.id(), user.name(), user.password()))
                 .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
     }
 
-    public RegistrationResult register(User registeredUser) {
+    public RegistrationResultDto register(RegisterUserDto registerUserDto) {
         final User user = User.builder()
-                .name(registeredUser.name())
-                .password(registeredUser.password())
+                .name(registerUserDto.name())
+                .password(registerUserDto.password())
                 .build();
         User savedUser = usersRepository.save(user);
-        return new RegistrationResult(savedUser.id(), savedUser.name(), true);
+        return new RegistrationResultDto(savedUser.id(), savedUser.name(), true);
     }
 }
