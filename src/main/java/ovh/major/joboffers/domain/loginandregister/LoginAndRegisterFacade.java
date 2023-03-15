@@ -3,10 +3,12 @@ package ovh.major.joboffers.domain.loginandregister;
 import ovh.major.joboffers.domain.loginandregister.dto.RegisterUserDto;
 import ovh.major.joboffers.domain.loginandregister.dto.RegistrationResultDto;
 import ovh.major.joboffers.domain.loginandregister.dto.UserDto;
+import ovh.major.joboffers.domain.loginandregister.exceptions.UserIsExistException;
+import ovh.major.joboffers.domain.loginandregister.exceptions.UserNotFoundException;
+
+import static ovh.major.joboffers.domain.loginandregister.exceptions.ExceptionMessages.USER_NOT_FOUND;
 
 public class LoginAndRegisterFacade {
-
-    private static final String USER_NOT_FOUND = "User not found!";
 
     private final UsersRepository usersRepository;
 
@@ -25,7 +27,12 @@ public class LoginAndRegisterFacade {
                 .name(registerUserDto.name())
                 .password(registerUserDto.password())
                 .build();
-        User savedUser = usersRepository.save(user);
+        User savedUser;
+        try {
+            savedUser = usersRepository.save(user);
+        } catch (UserIsExistException exception) {
+            return new RegistrationResultDto(null, registerUserDto.name(), false);
+        }
         return new RegistrationResultDto(savedUser.id(), savedUser.name(), true);
     }
 }
