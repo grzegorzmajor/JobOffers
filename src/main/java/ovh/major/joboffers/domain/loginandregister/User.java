@@ -6,5 +6,6 @@ import lombok.Builder;
 record User(
         String id,
         String name,
-        String password) {
+        String password
+) {
 }
