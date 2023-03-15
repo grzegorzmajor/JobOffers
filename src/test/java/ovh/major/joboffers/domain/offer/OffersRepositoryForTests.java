@@ -48,7 +48,9 @@ public class OffersRepositoryForTests implements OfferRepository {
 
     @Override
     public void deleteOfferByUrl(String url) {
-        offersList.remove(findOfferByUrl(url));
+        offersList = offersList.stream()
+                .filter( offer -> !url.equals(offer.offerUrl()))
+                .toList();
     }
 
     @Override
