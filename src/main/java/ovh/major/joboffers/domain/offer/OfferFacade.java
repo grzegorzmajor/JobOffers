@@ -5,7 +5,6 @@ import ovh.major.joboffers.domain.offer.dto.SavingOfferResultDto;
 import ovh.major.joboffers.domain.offer.exceptions.OfferNotFoundException;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static ovh.major.joboffers.domain.offer.exceptions.ExceptionMessages.OFFER_NOT_FOUND;
 
@@ -32,7 +31,7 @@ public class OfferFacade {
     }
 
     SavingOfferResultDto saveOffer(OfferDto offerDto){
-        Offer offer = new Offer().builder()
+        final Offer offer = Offer.builder()
                 .title(offerDto.title())
                 .company(offerDto.company())
                 .salary(offerDto.salary())
@@ -55,6 +54,5 @@ public class OfferFacade {
     void deleteOfferById(String id) {
         offerRepository.deleteOfferById(id);
     }
-
 
 }
