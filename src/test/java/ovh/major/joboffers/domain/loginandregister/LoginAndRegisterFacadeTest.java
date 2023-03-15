@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test;
 import ovh.major.joboffers.domain.loginandregister.dto.RegisterUserDto;
 import ovh.major.joboffers.domain.loginandregister.dto.RegistrationResultDto;
 import ovh.major.joboffers.domain.loginandregister.dto.UserDto;
-import ovh.major.joboffers.domain.loginandregister.exceptions.UserIsExistException;
 import ovh.major.joboffers.domain.loginandregister.exceptions.UserNotFoundException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -20,10 +19,12 @@ public class LoginAndRegisterFacadeTest {
     private final UsersRepositoryForTests usersRepository = new UsersRepositoryForTests();
     private final LoginAndRegisterFacade loginAndRegisterFacade = new LoginAndRegisterFacade(usersRepository);
 
+    final RegisterUserDto registerUserDto = new RegisterUserDto("name", "pass");
+
     @Test
     public void shouldThrowExceptionWhenUserNotFound() {
         //given
-        String username = "user";
+        final String username = "user";
 
         //when
        Throwable thrown = catchThrowable(() -> loginAndRegisterFacade.findByUsername(username));
@@ -38,7 +39,6 @@ public class LoginAndRegisterFacadeTest {
     @Test
     public void shouldFindUserByUserName() {
         //given
-        RegisterUserDto registerUserDto = new RegisterUserDto("name", "pass");
         RegistrationResultDto register = loginAndRegisterFacade.register(registerUserDto);
 
         //when
@@ -51,9 +51,6 @@ public class LoginAndRegisterFacadeTest {
 
     @Test
     public void shouldRegisterUserIfNotExist() {
-        //given
-        RegisterUserDto registerUserDto = new RegisterUserDto("name", "pass");
-
         //when
         RegistrationResultDto register = loginAndRegisterFacade.register(registerUserDto);
 
@@ -68,7 +65,6 @@ public class LoginAndRegisterFacadeTest {
     @Test
     public void shouldNotRegisterUserAndThrowExceptionIfUserExists() {
         //given
-        RegisterUserDto registerUserDto = new RegisterUserDto("name", "pass");
         loginAndRegisterFacade.register(registerUserDto);
 
         //when
