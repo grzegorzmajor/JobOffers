@@ -17,4 +17,6 @@ public interface OfferRepository {
 
     void deleteOfferById(String id);
 
+    int size();
+
 }
