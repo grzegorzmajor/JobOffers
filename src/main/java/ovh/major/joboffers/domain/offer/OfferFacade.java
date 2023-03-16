@@ -12,8 +12,17 @@ public class OfferFacade {
 
     private final OfferRepository offerRepository;
 
-    public OfferFacade(OfferRepository offerRepository) {
+    private final OfferService offerService;
+
+    public OfferFacade(OfferRepository offerRepository, OfferService offerService) {
         this.offerRepository = offerRepository;
+        this.offerService = offerService;
+    }
+    public List<OfferDto> fetchAllOffersAndSaveAllIfNotExists() {
+        return offerService.fetchAllOffersAndSaveAllIfNotExists()
+                .stream()
+                .map(OfferMapper::mapFromOfferToOfferDto)
+                .toList();
     }
 
     List<OfferDto> findAllOffers() {

@@ -1,10 +1,14 @@
 package ovh.major.joboffers.domain.offer;
 
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import ovh.major.joboffers.domain.offer.dto.OfferDto;
+import ovh.major.joboffers.domain.offer.dto.OfferExternalResponseDto;
 import ovh.major.joboffers.domain.offer.dto.OfferRequestDto;
 import ovh.major.joboffers.domain.offer.exceptions.DuplicateOfferKeyException;
 import ovh.major.joboffers.domain.offer.exceptions.OfferNotFoundException;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -17,8 +21,27 @@ public class OfferFacadeTest {
 
     private final OffersRepositoryForTests offerRepository = new OffersRepositoryForTests();
 
-    private final OfferFacade offerFacade = new OfferFacade(offerRepository);
+    private final OfferFetcherForTests offerFetcherForTests = new OfferFetcherForTests(List.of(
+            new OfferExternalResponseDto("tittle1", "company1", "sallary1", "url1"),
+            new OfferExternalResponseDto("tittle2", "company2", "sallary2", "url2"),
+            new OfferExternalResponseDto("tittle3", "company3", "sallary3", "url3"),
+            new OfferExternalResponseDto("tittle4", "company4", "sallary4", "url4")
+    ));
 
+    private final OfferFacade offerFacade = new OfferFacade(offerRepository,new OfferService(offerFetcherForTests, offerRepository));
+
+    @Test
+    public void shouldFetchFromJobsFromRemoteAndSaveOffersWhenRepositoryIsEmpty() {
+        // given
+        Assertions.assertThat(offerFacade.findAllOffers()).isEmpty();
+
+        // when
+        List<OfferDto> result = offerFacade.fetchAllOffersAndSaveAllIfNotExists();
+
+        // then
+        Assertions.assertThat(result).hasSize(4);
+
+    }
     @Test
     public void shouldSave4OffersWhenThereAreNoOffersInDatabase() {
         //when
@@ -94,11 +117,6 @@ public class OfferFacadeTest {
                 () -> assertThat(thrown.getMessage(), is(equalTo(new OfferNotFoundException(OFFER_NOT_FOUND).getMessage())))
 
         );
-    }
-
-    @Test
-    public void shouldFetchFromJobsFromRemoteAndSaveOffersWhenRepositoryIsEmpty() {
-
     }
 
     @Test
