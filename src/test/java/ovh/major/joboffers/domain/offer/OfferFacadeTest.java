@@ -2,6 +2,7 @@ package ovh.major.joboffers.domain.offer;
 
 import org.junit.jupiter.api.Test;
 import ovh.major.joboffers.domain.offer.dto.OfferDto;
+import ovh.major.joboffers.domain.offer.dto.OfferRequestDto;
 import ovh.major.joboffers.domain.offer.exceptions.DuplicateOfferKeyException;
 import ovh.major.joboffers.domain.offer.exceptions.OfferNotFoundException;
 
@@ -21,46 +22,46 @@ public class OfferFacadeTest {
     @Test
     public void shouldSave4OffersWhenThereAreNoOffersInDatabase() {
         //when
-        offerFacade.saveOffer(new OfferDto("tittle1", "company1", "sallary1", "url1"));
-        offerFacade.saveOffer(new OfferDto("tittle2", "company2", "sallary2", "url2"));
-        offerFacade.saveOffer(new OfferDto("tittle3", "company3", "sallary3", "url3"));
-        offerFacade.saveOffer(new OfferDto("tittle4", "company4", "sallary4", "url4"));
+        offerFacade.saveOffer(new OfferRequestDto("tittle1", "company1", "sallary1", "url1"));
+        offerFacade.saveOffer(new OfferRequestDto("tittle2", "company2", "sallary2", "url2"));
+        offerFacade.saveOffer(new OfferRequestDto("tittle3", "company3", "sallary3", "url3"));
+        offerFacade.saveOffer(new OfferRequestDto("tittle4", "company4", "sallary4", "url4"));
 
         //then
-        assertThat(offerRepository.size(),is(equalTo(4)));
+        assertThat(offerRepository.size(), is(equalTo(4)));
 
     }
 
     @Test
     public void shouldBeDeletedAllWhenDeleteAllOffers() {
         //given
-        offerFacade.saveOffer(new OfferDto("tittle1", "company1", "sallary1", "url1"));
-        offerFacade.saveOffer(new OfferDto("tittle2", "company2", "sallary2", "url2"));
-        offerFacade.saveOffer(new OfferDto("tittle3", "company3", "sallary3", "url3"));
-        offerFacade.saveOffer(new OfferDto("tittle4", "company4", "sallary4", "url4"));
+        offerFacade.saveOffer(new OfferRequestDto("tittle1", "company1", "sallary1", "url1"));
+        offerFacade.saveOffer(new OfferRequestDto("tittle2", "company2", "sallary2", "url2"));
+        offerFacade.saveOffer(new OfferRequestDto("tittle3", "company3", "sallary3", "url3"));
+        offerFacade.saveOffer(new OfferRequestDto("tittle4", "company4", "sallary4", "url4"));
 
         //when
         offerFacade.deleteAllOffers();
 
         //then
-        assertThat(offerRepository.size(),is(equalTo(0)));
+        assertThat(offerRepository.size(), is(equalTo(0)));
 
     }
 
     @Test
     public void shouldBeDeletedWhenDeleteOfferByUrl() {
         //given
-        offerFacade.saveOffer(new OfferDto("tittle1", "company1", "sallary1", "url1"));
-        offerFacade.saveOffer(new OfferDto("tittle2", "company2", "sallary2", "url2"));
-        offerFacade.saveOffer(new OfferDto("tittle3", "company3", "sallary3", "url3"));
-        offerFacade.saveOffer(new OfferDto("tittle4", "company4", "sallary4", "url4"));
+        offerFacade.saveOffer(new OfferRequestDto("tittle1", "company1", "sallary1", "url1"));
+        offerFacade.saveOffer(new OfferRequestDto("tittle2", "company2", "sallary2", "url2"));
+        offerFacade.saveOffer(new OfferRequestDto("tittle3", "company3", "sallary3", "url3"));
+        offerFacade.saveOffer(new OfferRequestDto("tittle4", "company4", "sallary4", "url4"));
 
         //when
         offerFacade.deleteOfferByUrl("url4");
 
         //then
         assertAll(
-                () -> assertThat(offerRepository.size(),is(equalTo(3))),
+                () -> assertThat(offerRepository.size(), is(equalTo(3))),
                 () -> assertThrows(OfferNotFoundException.class, () -> offerFacade.findOfferByUrl("url4"))
         );
 
@@ -69,16 +70,16 @@ public class OfferFacadeTest {
     @Test
     public void shouldThrowDuplicateKeyExceptionWhenWithOfferUrlExist() {
         //given
-        offerFacade.saveOffer(new OfferDto("tittle1", "company1", "sallary1", "url1"));
+        offerFacade.saveOffer(new OfferRequestDto("tittle1", "company1", "sallary1", "url1"));
 
         //when
-        Throwable thrown = catchThrowable(() -> offerFacade.saveOffer(new OfferDto("tittle2", "company2", "sallary2", "url1")));
+        Throwable thrown = catchThrowable(() -> offerFacade.saveOffer(new OfferRequestDto("tittle2", "company2", "sallary2", "url1")));
 
         //then
         assertAll(
-                () -> assertThat(thrown,is(instanceOf(DuplicateOfferKeyException.class))),
-                () -> assertThat(offerRepository.size(),is(equalTo(1))),
-                () -> assertThat(thrown.getMessage(),is(equalTo( new DuplicateOfferKeyException(DUPLICATE_KEY).getMessage())))
+                () -> assertThat(thrown, is(instanceOf(DuplicateOfferKeyException.class))),
+                () -> assertThat(offerRepository.size(), is(equalTo(1))),
+                () -> assertThat(thrown.getMessage(), is(equalTo(new DuplicateOfferKeyException(DUPLICATE_KEY).getMessage())))
         );
     }
 
@@ -89,8 +90,8 @@ public class OfferFacadeTest {
 
         //then
         assertAll(
-                () -> assertThat(thrown,is(instanceOf(OfferNotFoundException.class))),
-                () -> assertThat(thrown.getMessage(),is(equalTo( new OfferNotFoundException(OFFER_NOT_FOUND).getMessage())))
+                () -> assertThat(thrown, is(instanceOf(OfferNotFoundException.class))),
+                () -> assertThat(thrown.getMessage(), is(equalTo(new OfferNotFoundException(OFFER_NOT_FOUND).getMessage())))
 
         );
     }
@@ -103,16 +104,16 @@ public class OfferFacadeTest {
     @Test
     public void shouldFindOfferByUrlWhenOfferWasSaved() {
         //given
-        OfferDto offerDto = new OfferDto("tittle1", "company1", "sallary1", "url1");
-        offerFacade.saveOffer(new OfferDto("tittle1", "company1", "sallary1", "url1"));
+        OfferDto offerDto = new OfferDto(null, "tittle1", "company1", "sallary1", "url1");
+        offerFacade.saveOffer(new OfferRequestDto("tittle1", "company1", "sallary1", "url1"));
 
         //when
         OfferDto result = offerFacade.findOfferByUrl(offerDto.offerUrl());
 
         //then
         assertAll(
-                () -> assertThat(result.offerUrl(),is(equalTo(offerDto.offerUrl()))),
-                () -> assertEquals(result,offerDto)
+                () -> assertThat(result.offerUrl(), is(equalTo(offerDto.offerUrl()))),
+                () -> assertEquals(result, offerDto)
         );
 
     }

@@ -1,7 +1,8 @@
 package ovh.major.joboffers.domain.offer.dto;
 
 public record SavingOfferResultDto(
-        String title,
+        String id,
+        String position,
         String company,
         String salary,
         String offerUrl,

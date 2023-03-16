@@ -1,7 +1,6 @@
 package ovh.major.joboffers.domain.offer.dto;
 
-public record OfferDto(
-        String id,
+public record OfferRequestDto(
         String position,
         String company,
         String salary,

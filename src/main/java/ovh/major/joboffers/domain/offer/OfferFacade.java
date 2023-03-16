@@ -1,6 +1,7 @@
 package ovh.major.joboffers.domain.offer;
 
 import ovh.major.joboffers.domain.offer.dto.OfferDto;
+import ovh.major.joboffers.domain.offer.dto.OfferRequestDto;
 import ovh.major.joboffers.domain.offer.dto.SavingOfferResultDto;
 import ovh.major.joboffers.domain.offer.exceptions.OfferNotFoundException;
 
@@ -17,28 +18,39 @@ public class OfferFacade {
     }
 
     List<OfferDto> findAllOffers() {
-        List<Offer> offers = offerRepository.findAllOffers();
+        List<Offer> offers = offerRepository.findAll();
         return offers.stream()
-                .map(offer -> new OfferDto(offer.title(),offer.company(),offer.salary(),offer.offerUrl()))
+                .map(offer -> new OfferDto(
+                        offer.id(),
+                        offer.position(),
+                        offer.company(),
+                        offer.salary(),
+                        offer.offerUrl()))
                 .toList();
     }
 
     OfferDto findOfferByUrl(String url){
-        return offerRepository.findOfferByUrl(url)
-                .map(offer -> new OfferDto(offer.title(),offer.company(),offer.salary(),offer.offerUrl()))
+        return offerRepository.findByUrl(url)
+                .map(offer -> new OfferDto(
+                        offer.id(),
+                        offer.position(),
+                        offer.company(),
+                        offer.salary(),
+                        offer.offerUrl()))
                 .orElseThrow(() -> new OfferNotFoundException(OFFER_NOT_FOUND));
     }
 
-    SavingOfferResultDto saveOffer(OfferDto offerDto){
+    SavingOfferResultDto saveOffer(OfferRequestDto offerDto){
         final Offer offer = Offer.builder()
-                .title(offerDto.title())
+                .position(offerDto.position())
                 .company(offerDto.company())
                 .salary(offerDto.salary())
                 .offerUrl(offerDto.offerUrl())
                 .build();
         Offer savedOffer = offerRepository.save(offer);
         return new SavingOfferResultDto(
-                savedOffer.title(),
+                savedOffer.id(),
+                savedOffer.position(),
                 savedOffer.company(),
                 savedOffer.salary(),
                 savedOffer.offerUrl(),
@@ -51,7 +63,7 @@ public class OfferFacade {
     }
 
     void deleteOfferByUrl(String url) {
-        offerRepository.deleteOfferByUrl(url);
+        offerRepository.deleteByUrl(url);
     }
 
 }
