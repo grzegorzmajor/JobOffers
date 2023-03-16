@@ -25,10 +25,11 @@ public class OffersRepositoryForTests implements OfferRepository {
                 .findFirst();
     }
 
-    //TODO findById()
     @Override
     public Optional<Offer> findById(String id) {
-        return Optional.empty();
+        return offersList.stream()
+                .filter(offer -> id.equals(offer.id()))
+                .findFirst();
     }
 
     @Override
@@ -41,11 +42,12 @@ public class OffersRepositoryForTests implements OfferRepository {
         }
         return offer;
     }
-
-    //TODO saveALl()
+    
     @Override
     public List<Offer> saveAll(List<Offer> offers) {
-        return null;
+        return offers.stream()
+                .map(this::save)
+                .toList();
     }
 
     @Override
@@ -65,9 +67,11 @@ public class OffersRepositoryForTests implements OfferRepository {
         return offersList.size();
     }
 
-    //TODO existsByUrl()
     @Override
     public boolean existsByUrl(String url) {
-        return false;
+        long count = offersList.stream()
+                .filter(offer -> offer.offerUrl().equals(url))
+                .count();
+        return count == 1;
     }
 }
