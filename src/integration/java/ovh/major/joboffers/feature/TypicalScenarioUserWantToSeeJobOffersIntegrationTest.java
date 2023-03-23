@@ -3,7 +3,7 @@ package ovh.major.joboffers.feature;
 import org.junit.jupiter.api.Test;
 import ovh.major.joboffers.BaseIntegrationTest;
 
-public class UserWantJobOffersIntegrationTest extends BaseIntegrationTest {
+public class TypicalScenarioUserWantToSeeJobOffersIntegrationTest extends BaseIntegrationTest {
 
     @Test
     public void shouldOffersBeDisplayed() {
