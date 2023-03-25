@@ -23,7 +23,6 @@ public class OfferFetcherClient implements OfferFetchable {
     private final RestTemplate restTemplate;
     private final String uri;
     private final int port;
-    private final String parameter;
 
     @Override
     public List<OfferExternalResponseDto> fetchOffers() {
@@ -31,7 +30,7 @@ public class OfferFetcherClient implements OfferFetchable {
        HttpHeaders headers = new HttpHeaders();
        final HttpEntity<HttpHeaders> requestEntity = new HttpEntity<>(headers);
        try {
-           String urlForService = getUrl();
+           String urlForService = getUrl("/offer");
            final String url = UriComponentsBuilder.fromHttpUrl(urlForService).toUriString();
            ResponseEntity<List<OfferExternalResponseDto>> response = restTemplate.exchange(
                    url,
@@ -52,7 +51,7 @@ public class OfferFetcherClient implements OfferFetchable {
        }
     }
 
-    private String getUrl() {
-        return uri + ":" + port + parameter;
+    private String getUrl(String service) {
+        return uri + ":" + port + service;
     }
 }
