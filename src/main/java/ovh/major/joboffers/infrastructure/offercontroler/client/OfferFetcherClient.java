@@ -21,9 +21,9 @@ import java.util.List;
 public class OfferFetcherClient implements OfferFetchable {
 
     private final RestTemplate restTemplate;
-    private final String uri = "http://ec2-3-120-147-150.eu-central-1.compute.amazonaws.com";
-    private final int port = 5057;
-    private final String parameter = "/offers";
+    private final String uri;
+    private final int port;
+    private final String parameter;
 
     @Override
     public List<OfferExternalResponseDto> fetchOffers() {

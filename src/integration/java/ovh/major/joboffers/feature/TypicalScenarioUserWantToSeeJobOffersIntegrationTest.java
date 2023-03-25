@@ -1,14 +1,29 @@
 package ovh.major.joboffers.feature;
 
+import com.github.tomakehurst.wiremock.client.WireMock;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpStatus;
 import ovh.major.joboffers.BaseIntegrationTest;
 
 public class TypicalScenarioUserWantToSeeJobOffersIntegrationTest extends BaseIntegrationTest {
 
     @Test
     public void shouldOffersBeDisplayed() {
+
         //#klient chce pobrać dostępne oferty ale musi być zalogowany
         //1.nie ma ofert na serwerze
+        //given
+        wireMockServer.stubFor(WireMock.get("/offers")
+                .willReturn(WireMock.aResponse()
+                        .withStatus(HttpStatus.OK.value())
+                        .withHeader("Content-Type","application/json")
+                        .withBody("[]")
+                )
+        );
+        //when
+
+        //then
+
         //2.apka odpytuje zewnętrzną bazę i dodaje 0 ofert
         //3.użytkownik próbuje się zalogować i otrzymuje brak autoryzacji 401
         //4.użytkownik próbuje pobrać oferty i otrzymuje brak autoryzacji 401
