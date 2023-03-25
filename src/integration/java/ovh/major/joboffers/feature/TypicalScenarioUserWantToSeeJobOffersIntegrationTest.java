@@ -2,10 +2,18 @@ package ovh.major.joboffers.feature;
 
 import com.github.tomakehurst.wiremock.client.WireMock;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import ovh.major.joboffers.BaseIntegrationTest;
+import ovh.major.joboffers.domain.offer.dto.OfferExternalResponseDto;
+import ovh.major.joboffers.infrastructure.offercontroler.client.OfferFetcherClient;
+
+import java.util.List;
 
 public class TypicalScenarioUserWantToSeeJobOffersIntegrationTest extends BaseIntegrationTest {
+
+    @Autowired
+    OfferFetcherClient offerFetcherClient;
 
     @Test
     public void shouldOffersBeDisplayed() {
@@ -21,6 +29,7 @@ public class TypicalScenarioUserWantToSeeJobOffersIntegrationTest extends BaseIn
                 )
         );
         //when
+        List<OfferExternalResponseDto> jobResponse = offerFetcherClient.fetchOffers();
 
         //then
 

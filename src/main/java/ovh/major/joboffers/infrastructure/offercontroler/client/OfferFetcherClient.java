@@ -30,13 +30,13 @@ public class OfferFetcherClient implements OfferFetchable {
        HttpHeaders headers = new HttpHeaders();
        final HttpEntity<HttpHeaders> requestEntity = new HttpEntity<>(headers);
        try {
-           String urlForService = getUrl("/offer");
+           String urlForService = getUrl("/offers");
            final String url = UriComponentsBuilder.fromHttpUrl(urlForService).toUriString();
            ResponseEntity<List<OfferExternalResponseDto>> response = restTemplate.exchange(
                    url,
                    HttpMethod.GET,
                    requestEntity,
-                   new ParameterizedTypeReference<>(){
+                   new ParameterizedTypeReference<>() {
                    });
            final List<OfferExternalResponseDto> body = response.getBody();
            if (body == null) {

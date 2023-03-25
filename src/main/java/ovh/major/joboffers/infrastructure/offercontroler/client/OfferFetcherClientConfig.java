@@ -9,7 +9,7 @@ import ovh.major.joboffers.domain.offer.OfferFetchable;
 import java.time.Duration;
 
 @Configuration
-public class OfferHttpClientConfig {
+public class OfferFetcherClientConfig {
 
     @Bean
     public RestTemplateResponseErrorHandler restTemplateResponseErrorHandler() {
