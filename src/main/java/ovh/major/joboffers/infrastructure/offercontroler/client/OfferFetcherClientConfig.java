@@ -9,7 +9,7 @@ import ovh.major.joboffers.domain.offer.OfferFetchable;
 import java.time.Duration;
 
 @Configuration
-public class OfferHttpClientConfig {
+public class OfferFetcherClientConfig {
 
     @Bean
     public RestTemplateResponseErrorHandler restTemplateResponseErrorHandler() {
@@ -17,8 +17,8 @@ public class OfferHttpClientConfig {
     }
 
     @Bean
-    public RestTemplate restTemplate(@Value("1000") long connectionTimeout,
-                              @Value("1000") long readTimeout,
+    public RestTemplate restTemplate(@Value("${offer.fetcher.client.config.connectionTimeout}") long connectionTimeout,
+                              @Value("${offer.fetcher.client.config.readTimeout}") long readTimeout,
                               RestTemplateResponseErrorHandler restTemplateResponseErrorHandler) {
         return new RestTemplateBuilder()
                 .errorHandler(restTemplateResponseErrorHandler)
@@ -28,7 +28,9 @@ public class OfferHttpClientConfig {
     }
 
     @Bean
-    public OfferFetchable remoteOfferClient(RestTemplate restTemplate) {
-        return new OfferFetcherClient(restTemplate);
+    public OfferFetchable remoteOfferClient(RestTemplate restTemplate,
+                                            @Value("${offer.fetcher.client.config.uri}") String uri,
+                                            @Value("${offer.fetcher.client.config.port}") int port ){
+        return new OfferFetcherClient(restTemplate, uri, port);
     }
 }

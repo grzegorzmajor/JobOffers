@@ -21,9 +21,8 @@ import java.util.List;
 public class OfferFetcherClient implements OfferFetchable {
 
     private final RestTemplate restTemplate;
-    private final String uri = "http://ec2-3-120-147-150.eu-central-1.compute.amazonaws.com";
-    private final int port = 5057;
-    private final String parameter = "/offers";
+    private final String uri;
+    private final int port;
 
     @Override
     public List<OfferExternalResponseDto> fetchOffers() {
@@ -31,13 +30,13 @@ public class OfferFetcherClient implements OfferFetchable {
        HttpHeaders headers = new HttpHeaders();
        final HttpEntity<HttpHeaders> requestEntity = new HttpEntity<>(headers);
        try {
-           String urlForService = getUrl();
+           String urlForService = getUrl("/offers");
            final String url = UriComponentsBuilder.fromHttpUrl(urlForService).toUriString();
            ResponseEntity<List<OfferExternalResponseDto>> response = restTemplate.exchange(
                    url,
                    HttpMethod.GET,
                    requestEntity,
-                   new ParameterizedTypeReference<>(){
+                   new ParameterizedTypeReference<>() {
                    });
            final List<OfferExternalResponseDto> body = response.getBody();
            if (body == null) {
@@ -52,7 +51,7 @@ public class OfferFetcherClient implements OfferFetchable {
        }
     }
 
-    private String getUrl() {
-        return uri + ":" + port + parameter;
+    private String getUrl(String service) {
+        return uri + ":" + port + service;
     }
 }
