@@ -10,3 +10,7 @@ offer:
         port: 5057
         connectionTimeout: 1000
         readTimeout: 1000
+  scheduler:
+    delay: PT3H
+scheduling:
+  enabled: true

@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import ovh.major.joboffers.BaseIntegrationTest;
 import ovh.major.joboffers.domain.offer.dto.OfferExternalResponseDto;
 import ovh.major.joboffers.infrastructure.offercontroler.client.OfferFetcherClient;
+import ovh.major.joboffers.infrastructure.offercontroler.scheduler.OfferFetcherScheduler;
 
 import java.util.List;
 
@@ -24,6 +25,7 @@ public class TypicalScenarioUserWantToSeeJobOffersIntegrationTest extends BaseIn
 
         //#klient chce pobrać dostępne oferty ale musi być zalogowany
         //1.nie ma ofert na serwerze
+        //2.apka odpytuje zewnętrzną bazę i dodaje 0 ofert
         //given
         wireMockServer.stubFor(WireMock.get("/offers")
                 .willReturn(WireMock.aResponse()
@@ -38,7 +40,7 @@ public class TypicalScenarioUserWantToSeeJobOffersIntegrationTest extends BaseIn
         //then
         assertThat(jobResponse.size(),is(equalTo(0)));
 
-        //2.apka odpytuje zewnętrzną bazę i dodaje 0 ofert
+
         //3.użytkownik próbuje się zalogować i otrzymuje brak autoryzacji 401
         //4.użytkownik próbuje pobrać oferty i otrzymuje brak autoryzacji 401
         //5.użytkownik nie posiada konta i chce się zarejestrować

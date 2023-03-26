@@ -1,5 +1,6 @@
 package ovh.major.joboffers.domain.offer;
 
+import lombok.AllArgsConstructor;
 import ovh.major.joboffers.domain.offer.dto.OfferDto;
 import ovh.major.joboffers.domain.offer.dto.OfferRequestDto;
 import ovh.major.joboffers.domain.offer.exceptions.OfferNotFoundException;
@@ -8,16 +9,14 @@ import java.util.List;
 
 import static ovh.major.joboffers.domain.offer.exceptions.ExceptionMessages.OFFER_NOT_FOUND;
 
+@AllArgsConstructor
 public class OfferFacade {
 
     private final OfferRepository offerRepository;
 
     private final OfferService offerService;
 
-    public OfferFacade(OfferRepository offerRepository, OfferService offerService) {
-        this.offerRepository = offerRepository;
-        this.offerService = offerService;
-    }
+
     public List<OfferDto> fetchAllOffersAndSaveAllIfNotExists() {
         return offerService.fetchAllOffersAndSaveAllIfNotExists()
                 .stream()

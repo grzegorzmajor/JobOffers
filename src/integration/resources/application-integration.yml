@@ -1,0 +1,6 @@
+offer:
+  scheduler:
+    delay: PT1S
+
+scheduling:
+  enabled: false
