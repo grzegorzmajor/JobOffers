@@ -17,7 +17,7 @@ public class OfferFetcherScheduler {
 
     private final OfferFacade offerFacade;
 
-    @Scheduled(cron = "0 0 8 * * 2,5")
+    @Scheduled(cron = "${offer.scheduler.startTime}")
     //@Scheduled(cron = "*/5 * * * * *")
     public List<OfferDto> schedule() {
         log.info("------------");
