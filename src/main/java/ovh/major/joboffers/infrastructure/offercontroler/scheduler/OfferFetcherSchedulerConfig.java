@@ -12,6 +12,4 @@ import ovh.major.joboffers.infrastructure.offercontroler.client.OfferFetcherClie
 @ConditionalOnProperty(name="scheduling.enabled", matchIfMissing = false)
 class OfferFetcherSchedulerConfig {
 
-
-
 }
