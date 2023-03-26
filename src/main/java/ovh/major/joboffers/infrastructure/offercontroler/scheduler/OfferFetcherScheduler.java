@@ -17,8 +17,8 @@ public class OfferFetcherScheduler {
 
     private final OfferFacade offerFacade;
 
-    //@Scheduled(cron = "0 0 8 * * 2,5")
-    @Scheduled(cron = "*/5 * * * * *")
+    @Scheduled(cron = "0 0 8 * * 2,5")
+    //@Scheduled(cron = "*/5 * * * * *")
     public List<OfferDto> schedule() {
         log.info("------------");
         log.info("Scheduler: Fetching offer from external server.");

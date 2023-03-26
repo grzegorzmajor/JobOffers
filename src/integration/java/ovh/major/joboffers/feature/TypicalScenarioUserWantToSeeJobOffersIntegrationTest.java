@@ -39,6 +39,8 @@ public class TypicalScenarioUserWantToSeeJobOffersIntegrationTest extends BaseIn
         assertThat(jobResponse.size(),is(equalTo(0)));
 
         //2.apka odpytuje zewnętrzną bazę i dodaje 0 ofert
+
+
         //3.użytkownik próbuje się zalogować i otrzymuje brak autoryzacji 401
         //4.użytkownik próbuje pobrać oferty i otrzymuje brak autoryzacji 401
         //5.użytkownik nie posiada konta i chce się zarejestrować
