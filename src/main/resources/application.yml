@@ -11,8 +11,6 @@ offer:
         connectionTimeout: 1000
         readTimeout: 1000
   scheduler:
-    startTime: 0 0 8 * * 2,5
-
-
+    delay: PT3H
 scheduling:
   enabled: true
