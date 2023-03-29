@@ -1,26 +1,16 @@
 package ovh.major.joboffers.domain.offer;
 
-import java.util.List;
+import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
-public interface OfferRepository {
+@Repository
+public interface OfferRepository extends MongoRepository<Offer, String> {
 
-    List<Offer> findAll();
+    Optional<Offer> findByOfferUrl(String url);
 
-    Optional<Offer> findByUrl(String url);
+    void deleteByOfferUrl(String url);
 
-    Optional<Offer> findById(String id);
-
-    Offer save(Offer offer);
-
-    List<Offer> saveAll(List<Offer> offers);
-
-    void deleteAll();
-
-    void deleteByUrl(String url);
-
-    int size();
-
-    boolean existsByUrl(String url);
+    boolean existsByOfferUrl(String url);
 
 }
