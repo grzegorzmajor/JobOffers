@@ -6,7 +6,9 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import ovh.major.joboffers.domain.offer.OfferFacade;
 import ovh.major.joboffers.domain.offer.dto.OfferDto;
+
 import java.util.List;
+
 
 @Component
 @AllArgsConstructor
