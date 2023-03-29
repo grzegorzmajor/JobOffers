@@ -5,9 +5,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import ovh.major.joboffers.BaseIntegrationTest;
-import ovh.major.joboffers.domain.offer.dto.OfferDto;
+import ovh.major.joboffers.domain.offer.dto.OfferExternalResponseDto;
+import ovh.major.joboffers.infrastructure.offercontroler.client.OfferFetcherClient;
 import ovh.major.joboffers.infrastructure.offercontroler.scheduler.OfferFetcherScheduler;
+
 import java.util.List;
+
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 
@@ -15,7 +18,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 public class TypicalScenarioUserWantToSeeJobOffersIntegrationTest extends BaseIntegrationTest {
 
     @Autowired
-    OfferFetcherScheduler offerFetcherScheduler;
+    OfferFetcherClient offerFetcherClient;
 
     @Test
     public void shouldOfferFetcherReturnZeroOffer() {
@@ -32,10 +35,11 @@ public class TypicalScenarioUserWantToSeeJobOffersIntegrationTest extends BaseIn
                 )
         );
         //when
-        List<OfferDto> jobResponse = offerFetcherScheduler.schedule();
+        List<OfferExternalResponseDto> jobResponse = offerFetcherClient.fetchOffers();
 
         //then
         assertThat(jobResponse.size(),is(equalTo(0)));
+
 
         //3.użytkownik próbuje się zalogować i otrzymuje brak autoryzacji 401
         //4.użytkownik próbuje pobrać oferty i otrzymuje brak autoryzacji 401

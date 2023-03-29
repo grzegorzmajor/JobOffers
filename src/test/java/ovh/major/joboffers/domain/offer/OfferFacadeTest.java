@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import ovh.major.joboffers.domain.offer.dto.OfferDto;
 import ovh.major.joboffers.domain.offer.dto.OfferExternalResponseDto;
 import ovh.major.joboffers.domain.offer.dto.OfferRequestDto;
-import ovh.major.joboffers.domain.offer.exceptions.DuplicateOfferException;
+import ovh.major.joboffers.domain.offer.exceptions.DuplicateOfferKeyException;
 import ovh.major.joboffers.domain.offer.exceptions.OfferNotFoundException;
 
 import java.util.List;
@@ -14,7 +14,8 @@ import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static ovh.major.joboffers.domain.offer.exceptions.ExceptionMessages.*;
+import static ovh.major.joboffers.domain.offer.exceptions.ExceptionMessages.DUPLICATE_KEY;
+import static ovh.major.joboffers.domain.offer.exceptions.ExceptionMessages.OFFER_NOT_FOUND;
 
 public class OfferFacadeTest {
 
@@ -99,9 +100,9 @@ public class OfferFacadeTest {
 
         //then
         assertAll(
-                () -> assertThat(thrown, is(instanceOf(DuplicateOfferException.class))),
+                () -> assertThat(thrown, is(instanceOf(DuplicateOfferKeyException.class))),
                 () -> assertThat(offerRepository.size(), is(equalTo(1))),
-                () -> assertThat(thrown.getMessage(), is(equalTo(new DuplicateOfferException(DUPLICATED_OFFER).getMessage())))
+                () -> assertThat(thrown.getMessage(), is(equalTo(new DuplicateOfferKeyException(DUPLICATE_KEY).getMessage())))
         );
     }
 
@@ -126,18 +127,11 @@ public class OfferFacadeTest {
 
         //when
         OfferDto result = offerFacade.findOfferByUrl(offerDto.offerUrl());
-        OfferDto expectedOffer = new OfferDto(
-                result.id(),
-                offerDto.position(),
-                offerDto.company(),
-                offerDto.salary(),
-                offerDto.offerUrl()
-                );
 
         //then
         assertAll(
-                () -> assertThat(result.offerUrl(), is(equalTo(expectedOffer.offerUrl()))),
-                () -> assertEquals(result, expectedOffer)
+                () -> assertThat(result.offerUrl(), is(equalTo(offerDto.offerUrl()))),
+                () -> assertEquals(result, offerDto)
         );
 
     }

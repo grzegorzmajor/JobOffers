@@ -1,7 +1,7 @@
 package ovh.major.joboffers.domain.offer;
 
 import lombok.AllArgsConstructor;
-import ovh.major.joboffers.domain.offer.exceptions.DuplicateOfferException;
+import ovh.major.joboffers.domain.offer.exceptions.DuplicateOfferKeyException;
 import ovh.major.joboffers.domain.offer.exceptions.OfferSavingExceptions;
 
 import java.util.List;
@@ -20,7 +20,7 @@ public class OfferService {
         try {
             return offers;
             //return offerRepository.saveAll(offersForSaving);
-        } catch (DuplicateOfferException exception) {
+        } catch (DuplicateOfferKeyException exception) {
             throw new OfferSavingExceptions(DUPLICATED_OFFER);
         }
 
@@ -36,7 +36,7 @@ public class OfferService {
     private List<Offer> filterNotExistingOffers(List<Offer> submittedOffers) {
         return submittedOffers.stream()
                 .filter(offer -> !offer.offerUrl().isEmpty())
-                .filter(offer -> !offerRepository.existsByOfferUrl(offer.offerUrl()))
+                .filter(offer -> !offerRepository.existsByUrl(offer.offerUrl()))
                 .toList();
     }
 }
