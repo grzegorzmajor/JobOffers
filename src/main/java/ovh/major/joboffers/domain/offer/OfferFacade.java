@@ -4,9 +4,7 @@ import lombok.AllArgsConstructor;
 import ovh.major.joboffers.domain.offer.dto.OfferDto;
 import ovh.major.joboffers.domain.offer.dto.OfferRequestDto;
 import ovh.major.joboffers.domain.offer.exceptions.OfferNotFoundException;
-
 import java.util.List;
-
 import static ovh.major.joboffers.domain.offer.exceptions.ExceptionMessages.OFFER_NOT_FOUND;
 
 @AllArgsConstructor
@@ -37,7 +35,7 @@ public class OfferFacade {
     }
 
     OfferDto findOfferByUrl(String url){
-        return offerRepository.findByUrl(url)
+        return offerRepository.findByOfferUrl(url)
                 .map(offer -> new OfferDto(
                         offer.id(),
                         offer.position(),
@@ -58,7 +56,7 @@ public class OfferFacade {
     }
 
     void deleteOfferByUrl(String url) {
-        offerRepository.deleteByUrl(url);
+        offerRepository.deleteByOfferUrl(url);
     }
 
 }
