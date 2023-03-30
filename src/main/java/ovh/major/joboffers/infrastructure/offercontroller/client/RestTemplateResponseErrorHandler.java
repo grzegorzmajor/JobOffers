@@ -1,4 +1,4 @@
-package ovh.major.joboffers.infrastructure.offercontroler.client;
+package ovh.major.joboffers.infrastructure.offercontroller.client;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;

@@ -4,13 +4,21 @@ import com.github.tomakehurst.wiremock.client.WireMock;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultActions;
 import ovh.major.joboffers.BaseIntegrationTest;
 import ovh.major.joboffers.domain.offer.dto.OfferDto;
-import ovh.major.joboffers.infrastructure.offercontroler.scheduler.OfferFetcherScheduler;
+import ovh.major.joboffers.infrastructure.offercontroller.scheduler.OfferFetcherScheduler;
+import ovh.major.joboffers.infrastructure.requestcontroler.RequestDataDto;
+
 import java.util.List;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
-
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class TypicalScenarioUserWantToSeeJobOffersIntegrationTest extends BaseIntegrationTest {
 
@@ -18,7 +26,7 @@ public class TypicalScenarioUserWantToSeeJobOffersIntegrationTest extends BaseIn
     OfferFetcherScheduler offerFetcherScheduler;
 
     @Test
-    public void shouldOfferFetcherReturnZeroOffer() {
+    public void shouldOfferFetcherReturnZeroOffer() throws Exception {
 
         //#klient chce pobrać dostępne oferty ale musi być zalogowany
         //1.nie ma ofert na serwerze
@@ -41,15 +49,30 @@ public class TypicalScenarioUserWantToSeeJobOffersIntegrationTest extends BaseIn
         //4.użytkownik próbuje pobrać oferty i otrzymuje brak autoryzacji 401
         //5.użytkownik nie posiada konta i chce się zarejestrować
         //6.użytkownik wypełnia formularz rejestracji i go wysyła status 200
-        //7.użytkownik próbuje się zalogować , jeśli logowanie jest poprawne otrzymuje token statur 200
+        //7.użytkownik próbuje się zalogować , jeśli logowanie jest poprawne otrzymuje token status 200
         //8.użytkownik próbuje pobrać oferty z poprawnym tokenem w bazie nie ma ofert  otrzumuje o ofert status 200
         //9.w zewnętrznej bazie są nowe oferty
-        //10. apka odpytuje zewnętrzny serwer i dodaje nowe oferty
+        //10.apka odpytuje zewnętrzny serwer i dodaje nowe oferty
         //11.Użytkownik próbuje pobrać nieistniejącą ofertę – otrzymuje 404
         //12. Użytkownik probuje pobrać istniejącą ofertę – otrzymuje ją z kodem 200
         //13.apka odpytuje zewnętrzny serwer i dodaje nowe oferty
         //14.jeśli nie ma ofert lub od ostatniego zapytania upłynęło 3 godziny to zostaje odpytana zdalna baza
         //15.użytkownik wysyła zapytanie o oferty otrzymuje oferty z kodem 200
+        //given
+        //when
+        ResultActions perform = mockMvc.perform(post("/offers")
+                .content("""
+                        {
+                        "offersFilter": false
+                        }
+                        """)
+                .contentType(MediaType.APPLICATION_JSON));
+
+        //then
+        MvcResult mvcResult = perform.andExpect(status().isOk()).andReturn();
+        String response = mvcResult.getResponse().getContentAsString();
+        assertNotNull(response);
+
         //16.wylogowanie ręczne lub auto.
     }
 }
