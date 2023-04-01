@@ -1,4 +1,4 @@
-package ovh.major.joboffers.infrastructure.offercontroller.scheduler;
+package ovh.major.joboffers.infrastructure.offer_fetcher_and_sheduler_controllers.scheduler;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;

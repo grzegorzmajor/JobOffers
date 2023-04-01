@@ -1,4 +1,4 @@
-package ovh.major.joboffers.infrastructure.offercontroller.scheduler;
+package ovh.major.joboffers.infrastructure.offer_fetcher_and_sheduler_controllers.scheduler;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;
