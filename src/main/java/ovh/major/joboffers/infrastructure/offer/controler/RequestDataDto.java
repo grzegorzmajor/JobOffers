@@ -1,4 +1,4 @@
-package ovh.major.joboffers.infrastructure.requestcontroler;
+package ovh.major.joboffers.infrastructure.offer.controler;
 
 public record RequestDataDto(
         boolean offersFilter

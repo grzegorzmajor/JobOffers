@@ -8,8 +8,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import ovh.major.joboffers.BaseIntegrationTest;
-import ovh.major.joboffers.domain.offer.dto.OfferDto;
-import ovh.major.joboffers.infrastructure.offer_fetcher_and_sheduler_controllers.scheduler.OfferFetcherScheduler;
+import ovh.major.joboffers.domain.offer.dto.OfferDBResponseDto;
+import ovh.major.joboffers.infrastructure.offer.scheduler.OfferFetcherScheduler;
 
 import java.util.List;
 import static org.hamcrest.Matchers.*;
@@ -39,7 +39,7 @@ public class TypicalScenarioUserWantToSeeJobOffersIntegrationTest extends BaseIn
                 )
         );
         //when
-        List<OfferDto> jobResponse = offerFetcherScheduler.schedule();
+        List<OfferDBResponseDto> jobResponse = offerFetcherScheduler.schedule();
 
         //then
         assertThat(jobResponse.size(),is(equalTo(0)));

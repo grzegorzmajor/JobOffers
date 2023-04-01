@@ -3,7 +3,7 @@ package ovh.major.joboffers.domain.offer.dto;
 import lombok.Builder;
 
 @Builder
-public record OfferRequestDto(
+public record OfferDBRequestDto(
         String position,
         String company,
         String salary,

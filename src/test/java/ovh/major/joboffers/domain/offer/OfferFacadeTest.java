@@ -2,9 +2,9 @@ package ovh.major.joboffers.domain.offer;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
-import ovh.major.joboffers.domain.offer.dto.OfferDto;
+import ovh.major.joboffers.domain.offer.dto.OfferDBResponseDto;
 import ovh.major.joboffers.domain.offer.dto.OfferExternalResponseDto;
-import ovh.major.joboffers.domain.offer.dto.OfferRequestDto;
+import ovh.major.joboffers.domain.offer.dto.OfferDBRequestDto;
 import ovh.major.joboffers.domain.offer.exceptions.DuplicateOfferException;
 import ovh.major.joboffers.domain.offer.exceptions.OfferNotFoundException;
 
@@ -35,7 +35,7 @@ public class OfferFacadeTest {
         Assertions.assertThat(offerFacade.findAllOffers()).isEmpty();
 
         // when
-        List<OfferDto> result = offerFacade.fetchAllOffersAndSaveAllIfNotExists();
+        List<OfferDBResponseDto> result = offerFacade.fetchAllOffersAndSaveAllIfNotExists();
 
         // then
         Assertions.assertThat(result).hasSize(4);
@@ -44,10 +44,10 @@ public class OfferFacadeTest {
     @Test
     public void shouldSave4OffersWhenThereAreNoOffersInDatabase() {
         //when
-        offerFacade.saveOffer(new OfferRequestDto("tittle1", "company1", "sallary1", "url1"));
-        offerFacade.saveOffer(new OfferRequestDto("tittle2", "company2", "sallary2", "url2"));
-        offerFacade.saveOffer(new OfferRequestDto("tittle3", "company3", "sallary3", "url3"));
-        offerFacade.saveOffer(new OfferRequestDto("tittle4", "company4", "sallary4", "url4"));
+        offerFacade.saveOffer(new OfferDBRequestDto("tittle1", "company1", "sallary1", "url1"));
+        offerFacade.saveOffer(new OfferDBRequestDto("tittle2", "company2", "sallary2", "url2"));
+        offerFacade.saveOffer(new OfferDBRequestDto("tittle3", "company3", "sallary3", "url3"));
+        offerFacade.saveOffer(new OfferDBRequestDto("tittle4", "company4", "sallary4", "url4"));
 
         //then
         assertThat(offerRepository.size(), is(equalTo(4)));
@@ -57,10 +57,10 @@ public class OfferFacadeTest {
     @Test
     public void shouldBeDeletedAllWhenDeleteAllOffers() {
         //given
-        offerFacade.saveOffer(new OfferRequestDto("tittle1", "company1", "sallary1", "url1"));
-        offerFacade.saveOffer(new OfferRequestDto("tittle2", "company2", "sallary2", "url2"));
-        offerFacade.saveOffer(new OfferRequestDto("tittle3", "company3", "sallary3", "url3"));
-        offerFacade.saveOffer(new OfferRequestDto("tittle4", "company4", "sallary4", "url4"));
+        offerFacade.saveOffer(new OfferDBRequestDto("tittle1", "company1", "sallary1", "url1"));
+        offerFacade.saveOffer(new OfferDBRequestDto("tittle2", "company2", "sallary2", "url2"));
+        offerFacade.saveOffer(new OfferDBRequestDto("tittle3", "company3", "sallary3", "url3"));
+        offerFacade.saveOffer(new OfferDBRequestDto("tittle4", "company4", "sallary4", "url4"));
 
         //when
         offerFacade.deleteAllOffers();
@@ -73,10 +73,10 @@ public class OfferFacadeTest {
     @Test
     public void shouldBeDeletedWhenDeleteOfferByUrl() {
         //given
-        offerFacade.saveOffer(new OfferRequestDto("tittle1", "company1", "sallary1", "url1"));
-        offerFacade.saveOffer(new OfferRequestDto("tittle2", "company2", "sallary2", "url2"));
-        offerFacade.saveOffer(new OfferRequestDto("tittle3", "company3", "sallary3", "url3"));
-        offerFacade.saveOffer(new OfferRequestDto("tittle4", "company4", "sallary4", "url4"));
+        offerFacade.saveOffer(new OfferDBRequestDto("tittle1", "company1", "sallary1", "url1"));
+        offerFacade.saveOffer(new OfferDBRequestDto("tittle2", "company2", "sallary2", "url2"));
+        offerFacade.saveOffer(new OfferDBRequestDto("tittle3", "company3", "sallary3", "url3"));
+        offerFacade.saveOffer(new OfferDBRequestDto("tittle4", "company4", "sallary4", "url4"));
 
         //when
         offerFacade.deleteOfferByUrl("url4");
@@ -92,10 +92,10 @@ public class OfferFacadeTest {
     @Test
     public void shouldThrowDuplicateKeyExceptionWhenWithOfferUrlExist() {
         //given
-        offerFacade.saveOffer(new OfferRequestDto("tittle1", "company1", "sallary1", "url1"));
+        offerFacade.saveOffer(new OfferDBRequestDto("tittle1", "company1", "sallary1", "url1"));
 
         //when
-        Throwable thrown = catchThrowable(() -> offerFacade.saveOffer(new OfferRequestDto("tittle2", "company2", "sallary2", "url1")));
+        Throwable thrown = catchThrowable(() -> offerFacade.saveOffer(new OfferDBRequestDto("tittle2", "company2", "sallary2", "url1")));
 
         //then
         assertAll(
@@ -121,17 +121,17 @@ public class OfferFacadeTest {
     @Test
     public void shouldFindOfferByUrlWhenOfferWasSaved() {
         //given
-        OfferDto offerDto = new OfferDto(null, "tittle1", "company1", "sallary1", "url1");
-        offerFacade.saveOffer(new OfferRequestDto("tittle1", "company1", "sallary1", "url1"));
+        OfferDBResponseDto offerDBResponseDto = new OfferDBResponseDto(null, "tittle1", "company1", "sallary1", "url1");
+        offerFacade.saveOffer(new OfferDBRequestDto("tittle1", "company1", "sallary1", "url1"));
 
         //when
-        OfferDto result = offerFacade.findOfferByUrl(offerDto.offerUrl());
-        OfferDto expectedOffer = new OfferDto(
+        OfferDBResponseDto result = offerFacade.findOfferByUrl(offerDBResponseDto.offerUrl());
+        OfferDBResponseDto expectedOffer = new OfferDBResponseDto(
                 result.id(),
-                offerDto.position(),
-                offerDto.company(),
-                offerDto.salary(),
-                offerDto.offerUrl()
+                offerDBResponseDto.position(),
+                offerDBResponseDto.company(),
+                offerDBResponseDto.salary(),
+                offerDBResponseDto.offerUrl()
                 );
 
         //then

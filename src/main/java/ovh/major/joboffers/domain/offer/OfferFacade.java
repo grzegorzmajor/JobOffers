@@ -1,8 +1,8 @@
 package ovh.major.joboffers.domain.offer;
 
 import lombok.AllArgsConstructor;
-import ovh.major.joboffers.domain.offer.dto.OfferDto;
-import ovh.major.joboffers.domain.offer.dto.OfferRequestDto;
+import ovh.major.joboffers.domain.offer.dto.OfferDBResponseDto;
+import ovh.major.joboffers.domain.offer.dto.OfferDBRequestDto;
 import ovh.major.joboffers.domain.offer.exceptions.OfferNotFoundException;
 import java.util.List;
 import static ovh.major.joboffers.domain.offer.exceptions.ExceptionMessages.OFFER_NOT_FOUND;
@@ -15,17 +15,17 @@ public class OfferFacade {
     private final OfferService offerService;
 
 
-    public List<OfferDto> fetchAllOffersAndSaveAllIfNotExists() {
+    public List<OfferDBResponseDto> fetchAllOffersAndSaveAllIfNotExists() {
         return offerService.fetchAllOffersAndSaveAllIfNotExists()
                 .stream()
                 .map(OfferMapper::mapFromOfferToOfferDto)
                 .toList();
     }
 
-    List<OfferDto> findAllOffers() {
+    List<OfferDBResponseDto> findAllOffers() {
         List<Offer> offers = offerRepository.findAll();
         return offers.stream()
-                .map(offer -> new OfferDto(
+                .map(offer -> new OfferDBResponseDto(
                         offer.id(),
                         offer.position(),
                         offer.company(),
@@ -34,9 +34,9 @@ public class OfferFacade {
                 .toList();
     }
 
-    OfferDto findOfferByUrl(String url){
+    OfferDBResponseDto findOfferByUrl(String url){
         return offerRepository.findByOfferUrl(url)
-                .map(offer -> new OfferDto(
+                .map(offer -> new OfferDBResponseDto(
                         offer.id(),
                         offer.position(),
                         offer.company(),
@@ -45,7 +45,7 @@ public class OfferFacade {
                 .orElseThrow(() -> new OfferNotFoundException(OFFER_NOT_FOUND));
     }
 
-    OfferDto saveOffer(OfferRequestDto offerDto){
+    OfferDBResponseDto saveOffer(OfferDBRequestDto offerDto){
         final Offer offer = OfferMapper.mapFromOfferRequestToOffer(offerDto);
         Offer savedOffer = offerRepository.save(offer);
         return OfferMapper.mapFromOfferToOfferDto(offer);

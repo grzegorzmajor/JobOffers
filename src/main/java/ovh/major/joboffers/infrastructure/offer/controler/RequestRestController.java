@@ -1,4 +1,4 @@
-package ovh.major.joboffers.infrastructure.requestcontroler;
+package ovh.major.joboffers.infrastructure.offer.controler;
 
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
