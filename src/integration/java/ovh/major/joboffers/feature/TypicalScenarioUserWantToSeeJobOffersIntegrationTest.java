@@ -9,6 +9,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import ovh.major.joboffers.BaseIntegrationTest;
 import ovh.major.joboffers.domain.offer.dto.OfferDBResponseDto;
+import ovh.major.joboffers.infrastructure.offer.controler.RequestDataDto;
 import ovh.major.joboffers.infrastructure.offer.scheduler.OfferFetcherScheduler;
 
 import java.util.List;
@@ -16,6 +17,7 @@ import static org.hamcrest.Matchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -70,7 +72,12 @@ public class TypicalScenarioUserWantToSeeJobOffersIntegrationTest extends BaseIn
         //then
         MvcResult mvcResult = perform.andExpect(status().isOk()).andReturn();
         String response = mvcResult.getResponse().getContentAsString();
-        assertNotNull(response);
+        RequestDataDto requestDataDto = objectMapper.readValue(response, RequestDataDto.class);
+        assertAll(
+                () -> assertNotNull(response),
+                () -> assertFalse(requestDataDto.offersFilter())
+        );
+
 
         //16.wylogowanie ręczne lub auto.
     }

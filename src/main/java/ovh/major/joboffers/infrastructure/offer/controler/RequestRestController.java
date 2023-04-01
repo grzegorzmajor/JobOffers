@@ -11,12 +11,15 @@ import org.springframework.web.bind.annotation.RestController;
 public class RequestRestController {
 
     @PostMapping("/offers")
-    public ResponseEntity<String> offers(@RequestBody RequestDataDto request) {
+    public ResponseEntity<RequestDataDto> offers(@RequestBody RequestDataDto request) {
         if (request.offersFilter() ) {
             log.info("wysłano żądanie ofert z filtrem");
         } else {
             log.info("wysłano żądanie wszystkich ofert");
         };
-        return ResponseEntity.ok("nic tu nie ma jeszcze");
+        RequestDataDto response = RequestDataDto.builder()
+                .offersFilter(request.offersFilter())
+                .build();
+        return ResponseEntity.ok(response);
     }
 }
