@@ -22,7 +22,7 @@ public class OfferFacade {
                 .toList();
     }
 
-    List<OfferDBResponseDto> findAllOffers() {
+    public List<OfferDBResponseDto> findAllOffers() {
         List<Offer> offers = offerRepository.findAll();
         return offers.stream()
                 .map(offer -> new OfferDBResponseDto(
@@ -34,7 +34,7 @@ public class OfferFacade {
                 .toList();
     }
 
-    OfferDBResponseDto findOfferByUrl(String url){
+    public OfferDBResponseDto findOfferByUrl(String url){
         return offerRepository.findByOfferUrl(url)
                 .map(offer -> new OfferDBResponseDto(
                         offer.id(),
@@ -45,7 +45,7 @@ public class OfferFacade {
                 .orElseThrow(() -> new OfferNotFoundException(OFFER_NOT_FOUND));
     }
 
-    OfferDBResponseDto saveOffer(OfferDBRequestDto offerDto){
+    public OfferDBResponseDto saveOffer(OfferDBRequestDto offerDto){
         final Offer offer = OfferMapper.mapFromOfferRequestToOffer(offerDto);
         Offer savedOffer = offerRepository.save(offer);
         return OfferMapper.mapFromOfferToOfferDto(offer);

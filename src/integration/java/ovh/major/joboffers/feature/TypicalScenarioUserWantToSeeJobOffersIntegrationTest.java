@@ -1,5 +1,6 @@
 package ovh.major.joboffers.feature;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,16 +9,19 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import ovh.major.joboffers.BaseIntegrationTest;
+import ovh.major.joboffers.domain.offer.dto.OfferDBRequestDto;
 import ovh.major.joboffers.domain.offer.dto.OfferDBResponseDto;
-import ovh.major.joboffers.infrastructure.offer.controler.RequestDataDto;
 import ovh.major.joboffers.infrastructure.offer.scheduler.OfferFetcherScheduler;
 
 import java.util.List;
-import static org.hamcrest.Matchers.*;
+
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertFalse;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -58,27 +62,48 @@ public class TypicalScenarioUserWantToSeeJobOffersIntegrationTest extends BaseIn
         //12. Użytkownik probuje pobrać istniejącą ofertę – otrzymuje ją z kodem 200
         //13.apka odpytuje zewnętrzny serwer i dodaje nowe oferty
         //14.jeśli nie ma ofert lub od ostatniego zapytania upłynęło 3 godziny to zostaje odpytana zdalna baza
+
+
         //15.użytkownik wysyła zapytanie o oferty otrzymuje oferty z kodem 200
         //given
         //when
-        ResultActions perform = mockMvc.perform(post("/offers")
-                .content("""
+        ResultActions performGet = mockMvc.perform(get("/offers")
+                .contentType(MediaType.APPLICATION_JSON_VALUE));
+
+        //then
+        MvcResult mvcResultGet = performGet.andExpect(status().isOk()).andReturn();
+        String responseGet = mvcResultGet.getResponse().getContentAsString();
+        List<OfferDBResponseDto> offersGet = objectMapper.readValue(responseGet, new TypeReference<>() {
+        });
+        assertAll(
+                () -> assertThat(offersGet,is(empty())),
+                () -> assertThat(offersGet.size(), is(not(4)))
+        );
+
+        //16. dodawanie oferty
+        //given
+        String contentOfferJson= """
                         {
-                        "offersFilter": false
+                        "position" : "junior",
+                        "company": "firma krzak",
+                        "salary": "free",
+                        "offerUrl": "poszukaj se sam"
                         }
-                        """)
+                        """.trim();
+        //when
+        ResultActions performPost = mockMvc.perform(post("/offers")
+                .content(contentOfferJson)
                 .contentType(MediaType.APPLICATION_JSON));
 
         //then
-        MvcResult mvcResult = perform.andExpect(status().isOk()).andReturn();
-        String response = mvcResult.getResponse().getContentAsString();
-        RequestDataDto requestDataDto = objectMapper.readValue(response, RequestDataDto.class);
+        MvcResult mvcResultPost = performPost.andExpect(status().isOk()).andReturn();
+        String responsePost = mvcResultPost.getResponse().getContentAsString();
+
         assertAll(
-                () -> assertNotNull(response),
-                () -> assertFalse(requestDataDto.offersFilter())
+                () -> assertNotNull(responsePost)
         );
 
 
-        //16.wylogowanie ręczne lub auto.
+        //17.wylogowanie ręczne lub auto.
     }
 }
