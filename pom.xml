@@ -25,6 +25,7 @@
         <lombok.version>1.18.26</lombok.version>
         <testcontainers.version>1.17.6</testcontainers.version>
         <wiremock-jre8.version>2.35.0</wiremock-jre8.version>
+        <springfox-boot-starter.version>3.0.0</springfox-boot-starter.version>
     </properties>
 
     <dependencies>
@@ -42,6 +43,13 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-mongodb</artifactId>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/io.springfox/springfox-boot-starter -->
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-boot-starter</artifactId>
+            <version>${springfox-boot-starter.version}</version>
+        </dependency>
+
 
         <!-- https://mvnrepository.com/artifact/org.testcontainers/testcontainers -->
         <dependency>
