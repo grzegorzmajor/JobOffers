@@ -1,13 +1,13 @@
 package ovh.major.joboffers.domain.offer;
 
-import ovh.major.joboffers.domain.offer.dto.OfferDto;
+import ovh.major.joboffers.domain.offer.dto.OfferDBResponseDto;
 import ovh.major.joboffers.domain.offer.dto.OfferExternalResponseDto;
-import ovh.major.joboffers.domain.offer.dto.OfferRequestDto;
+import ovh.major.joboffers.domain.offer.dto.OfferDBRequestDto;
 
 public class OfferMapper {
 
-    public static OfferDto mapFromOfferToOfferDto(Offer offer) {
-        return OfferDto.builder()
+    public static OfferDBResponseDto mapFromOfferToOfferDto(Offer offer) {
+        return OfferDBResponseDto.builder()
                 .id(offer.id())
                 .position(offer.position())
                 .company(offer.company())
@@ -24,7 +24,7 @@ public class OfferMapper {
                 .offerUrl(externalOffer.offerUrl())
                 .build();
     }
-    public static Offer mapFromOfferRequestToOffer(OfferRequestDto offerRequest) {
+    public static Offer mapFromOfferRequestToOffer(OfferDBRequestDto offerRequest) {
         return Offer.builder()
                 .company(offerRequest.company())
                 .position(offerRequest.position())

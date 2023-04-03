@@ -1,4 +1,4 @@
-package ovh.major.joboffers.infrastructure.offercontroler.client;
+package ovh.major.joboffers.infrastructure.offer.fetcher;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
