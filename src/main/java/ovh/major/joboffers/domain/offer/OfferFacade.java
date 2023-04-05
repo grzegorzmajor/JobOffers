@@ -59,7 +59,7 @@ public class OfferFacade {
     public OfferDBResponseDto saveOffer(OfferDBRequestDto offerDto){
         final Offer offer = OfferMapper.mapFromOfferRequestToOffer(offerDto);
         Offer savedOffer = offerRepository.save(offer);
-        return OfferMapper.mapFromOfferToOfferDto(offer);
+        return OfferMapper.mapFromOfferToOfferDto(savedOffer);
     }
 
     void deleteAllOffers() {

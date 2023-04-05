@@ -101,13 +101,12 @@ public class TypicalScenarioUserWantToSeeJobOffersIntegrationTest extends BaseIn
         OfferDBResponseDto offerPostResult = objectMapper.readValue(responsePost, new TypeReference<>() {
         });
 
-        //assertThat(responsePost,is(equalTo("OK")));
         assertAll(
                 () -> assertThat(offerPostResult.salary(), is(equalTo("free"))),
                 () -> assertThat(offerPostResult.offerUrl(), is(equalTo("poszukaj se sam"))),
                 () -> assertThat(offerPostResult.company(), is(equalTo("firma krzak"))),
                 () -> assertThat(offerPostResult.position(), is(equalTo("junior"))),
-                () -> assertThat(offerPostResult.id(), is(not(null)))
+                () -> assertNotNull(offerPostResult.id())
         );
 
         //17.wylogowanie ręczne lub auto.
