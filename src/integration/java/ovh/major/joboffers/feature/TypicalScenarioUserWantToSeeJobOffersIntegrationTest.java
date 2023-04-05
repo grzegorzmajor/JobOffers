@@ -98,11 +98,16 @@ public class TypicalScenarioUserWantToSeeJobOffersIntegrationTest extends BaseIn
         //then
         MvcResult mvcResultPost = performPost.andExpect(status().isOk()).andReturn();
         String responsePost = mvcResultPost.getResponse().getContentAsString();
+        OfferDBResponseDto offerPostResult = objectMapper.readValue(responsePost, new TypeReference<>() {
+        });
 
         assertAll(
-                () -> assertNotNull(responsePost)
+                () -> assertThat(offerPostResult.salary(), is(equalTo("free"))),
+                () -> assertThat(offerPostResult.offerUrl(), is(equalTo("poszukaj se sam"))),
+                () -> assertThat(offerPostResult.company(), is(equalTo("firma krzak"))),
+                () -> assertThat(offerPostResult.position(), is(equalTo("junior"))),
+                () -> assertNotNull(offerPostResult.id())
         );
-
 
         //17.wylogowanie ręczne lub auto.
     }

@@ -45,10 +45,21 @@ public class OfferFacade {
                 .orElseThrow(() -> new OfferNotFoundException(OFFER_NOT_FOUND));
     }
 
+    public OfferDBResponseDto findOfferById(String id){
+        return offerRepository.findById(id)
+                .map(offer -> new OfferDBResponseDto(
+                        offer.id(),
+                        offer.position(),
+                        offer.company(),
+                        offer.salary(),
+                        offer.offerUrl()))
+                .orElseThrow(() -> new OfferNotFoundException(OFFER_NOT_FOUND));
+    }
+
     public OfferDBResponseDto saveOffer(OfferDBRequestDto offerDto){
         final Offer offer = OfferMapper.mapFromOfferRequestToOffer(offerDto);
         Offer savedOffer = offerRepository.save(offer);
-        return OfferMapper.mapFromOfferToOfferDto(offer);
+        return OfferMapper.mapFromOfferToOfferDto(savedOffer);
     }
 
     void deleteAllOffers() {

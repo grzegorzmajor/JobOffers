@@ -5,11 +5,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ovh.major.joboffers.domain.offer.OfferFacade;
-import ovh.major.joboffers.domain.offer.OfferMapper;
-import ovh.major.joboffers.domain.offer.dto.OfferDBRequestDto;
-import ovh.major.joboffers.domain.offer.dto.OfferDBResponseDto;
-import ovh.major.joboffers.domain.offer.dto.OfferExternalResponseDto;
-
+import ovh.major.joboffers.domain.offer.dto.*;
 import java.util.List;
 
 @RestController
@@ -21,15 +17,21 @@ public class RequestRestController {
     private final OfferFacade offerFacade;
 
     @PostMapping
-    public ResponseEntity<String> offers(@RequestBody OfferDBRequestDto offerToAdd) {
-        offerFacade.saveOffer(offerToAdd);
-        return ResponseEntity.ok("OK");
+    public ResponseEntity<OfferDBResponseDto> offers(@RequestBody OfferDBRequestDto offerToAdd) {
+        OfferDBResponseDto offerDBResponseDto = offerFacade.saveOffer(offerToAdd);
+        return ResponseEntity.ok(offerDBResponseDto);
     }
 
     @GetMapping
     public ResponseEntity<List<OfferDBResponseDto>> findAllOffers() {
         List<OfferDBResponseDto> allOffer = offerFacade.findAllOffers();
         return ResponseEntity.ok(allOffer);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<OfferDBResponseDto> findOfferById(@PathVariable String id) {
+        OfferDBResponseDto offerById = offerFacade.findOfferById(id);
+        return ResponseEntity.ok(offerById);
     }
 
 }
