@@ -25,7 +25,11 @@
         <lombok.version>1.18.26</lombok.version>
         <testcontainers.version>1.17.6</testcontainers.version>
         <wiremock-jre8.version>2.35.0</wiremock-jre8.version>
-        <springfox-boot-starter.version>3.0.0</springfox-boot-starter.version>
+
+        <springfox.version>3.0.0</springfox.version>
+        <springdoc.version>2.1.0</springdoc.version>
+        <springrestdocs.version>3.0.0</springrestdocs.version>
+
     </properties>
 
     <dependencies>
@@ -43,11 +47,23 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-mongodb</artifactId>
         </dependency>
+
         <!-- https://mvnrepository.com/artifact/io.springfox/springfox-boot-starter -->
+        <!--  SWAGGER URL:  http://localhost:8080/swagger-ui/index.html#/ -->
         <dependency>
             <groupId>io.springfox</groupId>
-            <artifactId>springfox-boot-starter</artifactId>
-            <version>${springfox-boot-starter.version}</version>
+            <artifactId>springfox-data-rest</artifactId>
+            <version>${springfox.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>${springdoc.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.restdocs</groupId>
+            <artifactId>spring-restdocs-mockmvc</artifactId>
+            <version>${springrestdocs.version}</version>
         </dependency>
 
 

@@ -99,10 +99,7 @@ public class TypicalScenarioUserWantToSeeJobOffersIntegrationTest extends BaseIn
         MvcResult mvcResultPost = performPost.andExpect(status().isOk()).andReturn();
         String responsePost = mvcResultPost.getResponse().getContentAsString();
 
-        assertAll(
-                () -> assertNotNull(responsePost)
-        );
-
+        assertThat(responsePost,is(equalTo("OK")));
 
         //17.wylogowanie ręczne lub auto.
     }
