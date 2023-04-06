@@ -86,7 +86,7 @@ public class TypicalScenarioUserWantToSeeJobOffersIntegrationTest extends BaseIn
         });
 
         assertAll(
-                () -> assertThat(errorResponse.message(), is(equalTo(ExceptionMessages.OFFER_NOT_FOUND.toString()))),
+                () -> assertThat(errorResponse.message(), is(containsString(ExceptionMessages.OFFER_NOT_FOUND.toString()))),
                 () -> assertThat(errorResponse.status(), is(equalTo(HttpStatus.NOT_FOUND)))
         );
 

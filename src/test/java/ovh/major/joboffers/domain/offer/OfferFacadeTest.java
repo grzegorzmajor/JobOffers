@@ -103,7 +103,7 @@ public class OfferFacadeTest {
         assertAll(
                 () -> assertThat(thrown, is(instanceOf(DuplicateOfferException.class))),
                 () -> assertThat(offerRepository.size(), is(equalTo(1))),
-                () -> assertThat(thrown.getMessage(), is(equalTo(new DuplicateOfferException(DUPLICATED_OFFER).getMessage())))
+                () -> assertThat(thrown.getMessage(), is(equalTo(DUPLICATED_OFFER.toString())))
         );
     }
 
@@ -115,7 +115,7 @@ public class OfferFacadeTest {
         //then
         assertAll(
                 () -> assertThat(thrown, is(instanceOf(OfferNotFoundException.class))),
-                () -> assertThat(thrown.getMessage(), is(equalTo(new OfferNotFoundException(OFFER_NOT_FOUND).getMessage())))
+                () -> assertThat(thrown.getMessage(), is(containsString(OFFER_NOT_FOUND.toString())))
 
         );
     }

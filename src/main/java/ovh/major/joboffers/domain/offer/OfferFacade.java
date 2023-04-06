@@ -44,7 +44,7 @@ public class OfferFacade {
                         offer.company(),
                         offer.salary(),
                         offer.offerUrl()))
-                .orElseThrow(() -> new OfferNotFoundException(OFFER_NOT_FOUND));
+                .orElseThrow(() -> new OfferNotFoundException(OFFER_NOT_FOUND, "with url " + url));
     }
 
     public OfferDBResponseDto findOfferById(String id) {
@@ -55,7 +55,7 @@ public class OfferFacade {
                         offer.company(),
                         offer.salary(),
                         offer.offerUrl()))
-                .orElseThrow(() -> new OfferNotFoundException(OFFER_NOT_FOUND));
+                .orElseThrow(() -> new OfferNotFoundException(OFFER_NOT_FOUND, "with id " + id));
     }
 
     public OfferDBResponseDto saveOffer(OfferDBRequestDto offerDto) {
