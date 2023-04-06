@@ -6,7 +6,9 @@ import org.springframework.boot.test.mock.mockito.SpyBean;
 import ovh.major.joboffers.BaseIntegrationTest;
 import ovh.major.joboffers.JobOffersSpringBootApplication;
 import ovh.major.joboffers.domain.offer.OfferFetchable;
+
 import java.time.Duration;
+
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.testcontainers.shaded.org.awaitility.Awaitility.await;

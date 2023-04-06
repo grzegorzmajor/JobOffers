@@ -2,9 +2,9 @@ package ovh.major.joboffers.domain.offer;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
+import ovh.major.joboffers.domain.offer.dto.OfferDBRequestDto;
 import ovh.major.joboffers.domain.offer.dto.OfferDBResponseDto;
 import ovh.major.joboffers.domain.offer.dto.OfferExternalResponseDto;
-import ovh.major.joboffers.domain.offer.dto.OfferDBRequestDto;
 import ovh.major.joboffers.domain.offer.exceptions.DuplicateOfferException;
 import ovh.major.joboffers.domain.offer.exceptions.OfferNotFoundException;
 
@@ -14,7 +14,8 @@ import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static ovh.major.joboffers.domain.offer.exceptions.ExceptionMessages.*;
+import static ovh.major.joboffers.domain.offer.exceptions.ExceptionMessages.DUPLICATED_OFFER;
+import static ovh.major.joboffers.domain.offer.exceptions.ExceptionMessages.OFFER_NOT_FOUND;
 
 public class OfferFacadeTest {
 
@@ -27,7 +28,7 @@ public class OfferFacadeTest {
             new OfferExternalResponseDto("tittle4", "company4", "sallary4", "url4")
     ));
 
-    private final OfferFacade offerFacade = new OfferFacade(offerRepository,new OfferService(offerFetcherForTests, offerRepository));
+    private final OfferFacade offerFacade = new OfferFacade(offerRepository, new OfferService(offerFetcherForTests, offerRepository));
 
     @Test
     public void shouldFetchFromJobsFromRemoteAndSaveOffersWhenRepositoryIsEmpty() {
@@ -41,6 +42,7 @@ public class OfferFacadeTest {
         Assertions.assertThat(result).hasSize(4);
 
     }
+
     @Test
     public void shouldSave4OffersWhenThereAreNoOffersInDatabase() {
         //when
@@ -132,7 +134,7 @@ public class OfferFacadeTest {
                 offerDBResponseDto.company(),
                 offerDBResponseDto.salary(),
                 offerDBResponseDto.offerUrl()
-                );
+        );
 
         //then
         assertAll(

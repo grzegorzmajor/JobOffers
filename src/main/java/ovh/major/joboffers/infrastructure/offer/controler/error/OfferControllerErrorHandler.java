@@ -15,7 +15,7 @@ public class OfferControllerErrorHandler {
     @ExceptionHandler(OfferNotFoundException.class)
     @ResponseBody
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public OfferControllerErrorResponse offerNotFound(OfferNotFoundException exception){
+    public OfferControllerErrorResponse offerNotFound(OfferNotFoundException exception) {
         String message = exception.getMessage();
         log.error("OfferControllerErrorHandler: " + message);
         return new OfferControllerErrorResponse(message, HttpStatus.NOT_FOUND);

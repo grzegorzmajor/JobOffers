@@ -1,8 +1,8 @@
 package ovh.major.joboffers.domain.offer;
 
+import ovh.major.joboffers.domain.offer.dto.OfferDBRequestDto;
 import ovh.major.joboffers.domain.offer.dto.OfferDBResponseDto;
 import ovh.major.joboffers.domain.offer.dto.OfferExternalResponseDto;
-import ovh.major.joboffers.domain.offer.dto.OfferDBRequestDto;
 
 public class OfferMapper {
 
@@ -24,6 +24,7 @@ public class OfferMapper {
                 .offerUrl(externalOffer.offerUrl())
                 .build();
     }
+
     public static Offer mapFromOfferRequestToOffer(OfferDBRequestDto offerRequest) {
         return Offer.builder()
                 .company(offerRequest.company())

@@ -94,7 +94,7 @@ public class OffersRepositoryForTests implements OfferRepository {
 
     @Override
     public <S extends Offer> List<S> saveAll(Iterable<S> entities) {
-        return  StreamSupport.stream(entities.spliterator(), false)
+        return StreamSupport.stream(entities.spliterator(), false)
                 .map(this::save)
                 .toList();
     }

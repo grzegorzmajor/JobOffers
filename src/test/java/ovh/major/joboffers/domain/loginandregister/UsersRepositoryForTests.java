@@ -10,6 +10,7 @@ import static ovh.major.joboffers.domain.loginandregister.exceptions.ExceptionMe
 
 public class UsersRepositoryForTests implements UsersRepository {
     List<User> usersList = new ArrayList<>();
+
     @Override
     public Optional<User> findByUsername(String username) {
         return usersList.stream()
@@ -20,14 +21,15 @@ public class UsersRepositoryForTests implements UsersRepository {
     @Override
     public User save(User user) {
         final Optional<User> foundUser = findByUsername(user.name());
-        if( !foundUser.isPresent() ) {
+        if (!foundUser.isPresent()) {
             usersList.add(user);
         } else {
             throw new UserIsExistException(USER_EXISTS);
         }
         return user;
     }
-     public int size() {
+
+    public int size() {
         return usersList.size();
-     }
+    }
 }

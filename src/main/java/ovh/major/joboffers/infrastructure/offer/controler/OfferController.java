@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.*;
 import ovh.major.joboffers.domain.offer.OfferFacade;
 import ovh.major.joboffers.domain.offer.dto.OfferDBRequestDto;
 import ovh.major.joboffers.domain.offer.dto.OfferDBResponseDto;
-import ovh.major.joboffers.domain.offer.exceptions.OfferNotFoundException;
 
 import java.util.List;
 
@@ -33,7 +32,7 @@ public class OfferController {
 
     @GetMapping("/{id}")
     public ResponseEntity<OfferDBResponseDto> findOfferById(@PathVariable String id) {
-    OfferDBResponseDto offerById = offerFacade.findOfferById(id);
-    return ResponseEntity.ok(offerById);
+        OfferDBResponseDto offerById = offerFacade.findOfferById(id);
+        return ResponseEntity.ok(offerById);
     }
 }

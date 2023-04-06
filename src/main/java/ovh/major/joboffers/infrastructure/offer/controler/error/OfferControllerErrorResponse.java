@@ -4,6 +4,6 @@ import org.springframework.http.HttpStatus;
 
 public record OfferControllerErrorResponse(
         String message,
-        HttpStatus status){
+        HttpStatus status) {
 
 }
