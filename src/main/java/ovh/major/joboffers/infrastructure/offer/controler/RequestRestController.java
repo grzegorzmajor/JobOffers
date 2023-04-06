@@ -17,7 +17,7 @@ public class RequestRestController {
     private final OfferFacade offerFacade;
 
     @PostMapping
-    public ResponseEntity<OfferDBResponseDto> offers(@RequestBody OfferDBRequestDto offerToAdd) {
+    public ResponseEntity<OfferDBResponseDto> addOffers(@RequestBody OfferDBRequestDto offerToAdd) {
         OfferDBResponseDto offerDBResponseDto = offerFacade.saveOffer(offerToAdd);
         return ResponseEntity.ok(offerDBResponseDto);
     }
