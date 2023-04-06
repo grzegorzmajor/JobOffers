@@ -10,6 +10,8 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import ovh.major.joboffers.BaseIntegrationTest;
 import ovh.major.joboffers.domain.offer.dto.OfferDBResponseDto;
+import ovh.major.joboffers.domain.offer.exceptions.ExceptionMessages;
+import ovh.major.joboffers.infrastructure.offer.controler.error.OfferControllerErrorResponse;
 import ovh.major.joboffers.infrastructure.offer.scheduler.OfferFetcherScheduler;
 
 import java.util.List;
@@ -75,15 +77,17 @@ public class TypicalScenarioUserWantToSeeJobOffersIntegrationTest extends BaseIn
         //11.Użytkownik próbuje pobrać nieistniejącą ofertę – otrzymuje 204 - no content
         //given
         //when
-        ResultActions performGetWithId = mockMvc.perform(get("/offers/notexistingid")
+        ResultActions performGetWithNotExistingId = mockMvc.perform(get("/offers/notexistingid")
                 .contentType(MediaType.APPLICATION_JSON_VALUE));
-
         //then
-        MvcResult mvcResultGetWithId = performGetWithId.andExpect(status().isNoContent()).andReturn();
-        String responseGetWithId = mvcResultGetWithId.getResponse().getContentAsString();
+        MvcResult mvcResultGetWithNotExistingId = performGetWithNotExistingId.andExpect(status().isNotFound()).andReturn();
+        String responseGetWithNotExistingId = mvcResultGetWithNotExistingId.getResponse().getContentAsString();
+        OfferControllerErrorResponse errorResponse = objectMapper.readValue(responseGetWithNotExistingId, new TypeReference<>() {
+        });
+
         assertAll(
-                () -> assertThat(responseGetWithId, is(equalTo(""))),
-                () -> assertThat(mvcResultGetWithId.getResponse().getStatus(), is(equalTo(404)))
+                () -> assertThat(errorResponse.message(), is(equalTo(ExceptionMessages.OFFER_NOT_FOUND.toString()))),
+                () -> assertThat(errorResponse.status(), is(equalTo(HttpStatus.NOT_FOUND)))
         );
 
         //12.Użytkownik probuje pobrać istniejącą ofertę – otrzymuje ją z kodem 200

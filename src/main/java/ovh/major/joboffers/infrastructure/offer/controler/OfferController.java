@@ -15,7 +15,7 @@ import java.util.List;
 @RequestMapping("/offers")
 @Log4j2
 @AllArgsConstructor
-public class RequestRestController {
+public class OfferController {
 
     private final OfferFacade offerFacade;
 
@@ -33,12 +33,12 @@ public class RequestRestController {
 
     @GetMapping("/{id}")
     public ResponseEntity<OfferDBResponseDto> findOfferById(@PathVariable String id) {
-        try {
+    //    try {
             OfferDBResponseDto offerById = offerFacade.findOfferById(id);
             return ResponseEntity.ok(offerById);
-        } catch (OfferNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+//        } catch (OfferNotFoundException e) {
+//            return ResponseEntity.notFound().build();
+//        }
     }
 
 }
