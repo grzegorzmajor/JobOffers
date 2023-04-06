@@ -37,7 +37,7 @@ public class RequestRestController {
             OfferDBResponseDto offerById = offerFacade.findOfferById(id);
             return ResponseEntity.ok(offerById);
         } catch (OfferNotFoundException e) {
-            return ResponseEntity.noContent().build();
+            return ResponseEntity.notFound().build();
         }
     }
 

@@ -83,7 +83,7 @@ public class TypicalScenarioUserWantToSeeJobOffersIntegrationTest extends BaseIn
         String responseGetWithId = mvcResultGetWithId.getResponse().getContentAsString();
         assertAll(
                 () -> assertThat(responseGetWithId, is(equalTo(""))),
-                () -> assertThat(mvcResultGetWithId.getResponse().getStatus(), is(equalTo(204)))
+                () -> assertThat(mvcResultGetWithId.getResponse().getStatus(), is(equalTo(404)))
         );
 
         //12.Użytkownik probuje pobrać istniejącą ofertę – otrzymuje ją z kodem 200
