@@ -33,12 +33,7 @@ public class OfferController {
 
     @GetMapping("/{id}")
     public ResponseEntity<OfferDBResponseDto> findOfferById(@PathVariable String id) {
-    //    try {
-            OfferDBResponseDto offerById = offerFacade.findOfferById(id);
-            return ResponseEntity.ok(offerById);
-//        } catch (OfferNotFoundException e) {
-//            return ResponseEntity.notFound().build();
-//        }
+    OfferDBResponseDto offerById = offerFacade.findOfferById(id);
+    return ResponseEntity.ok(offerById);
     }
-
 }
