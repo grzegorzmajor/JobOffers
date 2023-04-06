@@ -5,7 +5,10 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ovh.major.joboffers.domain.offer.OfferFacade;
-import ovh.major.joboffers.domain.offer.dto.*;
+import ovh.major.joboffers.domain.offer.dto.OfferDBRequestDto;
+import ovh.major.joboffers.domain.offer.dto.OfferDBResponseDto;
+import ovh.major.joboffers.domain.offer.exceptions.OfferNotFoundException;
+
 import java.util.List;
 
 @RestController
@@ -30,8 +33,12 @@ public class RequestRestController {
 
     @GetMapping("/{id}")
     public ResponseEntity<OfferDBResponseDto> findOfferById(@PathVariable String id) {
-        OfferDBResponseDto offerById = offerFacade.findOfferById(id);
-        return ResponseEntity.ok(offerById);
+        try {
+            OfferDBResponseDto offerById = offerFacade.findOfferById(id);
+            return ResponseEntity.ok(offerById);
+        } catch (OfferNotFoundException e) {
+            return ResponseEntity.noContent().build();
+        }
     }
 
 }
