@@ -207,7 +207,7 @@ public class TypicalScenarioUserWantToSeeJobOffersIntegrationTest extends BaseIn
 
         //then
         performPost15.andExpect(status().isNoContent());
-        MvcResult mvcResultPost15 = performPost15.andExpect(status().isNotFound()).andReturn();
+        MvcResult mvcResultPost15 = performPost15.andExpect(status().isNoContent()).andReturn();
 
         ResultActions performGet15 = mockMvc.perform(get("/offers/" + offerIdToDelete)
                 .content(contentOfferJson)
