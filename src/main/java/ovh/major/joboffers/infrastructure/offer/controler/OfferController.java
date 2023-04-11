@@ -30,7 +30,7 @@ public class OfferController {
     }
 
     @PostMapping("/{id}")
-    public ResponseEntity deleteOffer(@RequestBody String id) {
+    public ResponseEntity deleteOffer(@RequestBody @PathVariable String id) {
         try {
             offerFacade.findOfferById(id);
         } catch(OfferNotFoundException exception) {
