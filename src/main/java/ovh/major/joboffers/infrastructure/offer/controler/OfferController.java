@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ovh.major.joboffers.domain.offer.OfferFacade;
@@ -25,12 +26,19 @@ public class OfferController {
     @PostMapping
     public ResponseEntity<OfferDBResponseDto> addOffer(@RequestBody @Valid OfferDBRequestDto offerToAdd) {
         OfferDBResponseDto offerDBResponseDto = offerFacade.saveOffer(offerToAdd);
-        return ResponseEntity.ok(offerDBResponseDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(offerDBResponseDto);
     }
 
     @PostMapping("/{id}")
-    public void deleteOffer(@RequestBody String id) {
+    public ResponseEntity deleteOffer(@RequestBody String id) {
+        try {
+            offerFacade.findOfferById(id);
+        } catch(OfferNotFoundException exception) {
+            log.error("in delete post request: " + exception.getMessage());
+            return ResponseEntity.notFound().build();
+        }
         offerFacade.deleteOfferById(id);
+        return ResponseEntity.accepted().build();
     }
 
     @GetMapping
