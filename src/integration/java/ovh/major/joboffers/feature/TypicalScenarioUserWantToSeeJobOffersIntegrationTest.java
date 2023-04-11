@@ -9,6 +9,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import ovh.major.joboffers.BaseIntegrationTest;
+import ovh.major.joboffers.SampleOfferResponse;
 import ovh.major.joboffers.domain.offer.dto.OfferDBResponseDto;
 import ovh.major.joboffers.domain.offer.exceptions.ExceptionMessages;
 import ovh.major.joboffers.infrastructure.offer.controler.error.OfferControllerErrorResponse;
@@ -24,25 +25,29 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class TypicalScenarioUserWantToSeeJobOffersIntegrationTest extends BaseIntegrationTest {
+public class TypicalScenarioUserWantToSeeJobOffersIntegrationTest extends BaseIntegrationTest implements SampleOfferResponse {
 
     @Autowired
     OfferFetcherScheduler offerFetcherScheduler;
 
     @Test
-    public void shouldOfferFetcherReturnZeroOffer() throws Exception {
+    public void user_want_to_see_offers_but_have_to_be_logged_in_and_external_server_should_have_some_offers() throws Exception {
 
         //#klient chce pobrać dostępne oferty ale musi być zalogowany
         //1.nie ma ofert na serwerze
-        //2.apka odpytuje zewnętrzną bazę i dodaje 0 ofert
         //given
+        //when
+        //then
         wireMockServer.stubFor(WireMock.get("/offers")
                 .willReturn(WireMock.aResponse()
                         .withStatus(HttpStatus.OK.value())
                         .withHeader("Content-Type", "application/json")
-                        .withBody("[]")
+                        .withBody(zeroOffersJson())
                 )
         );
+
+        //2.apka odpytuje zewnętrzną bazę i dodaje 0 ofert
+        //given
         //when
         List<OfferDBResponseDto> jobResponse = offerFetcherScheduler.schedule();
 
@@ -54,6 +59,7 @@ public class TypicalScenarioUserWantToSeeJobOffersIntegrationTest extends BaseIn
         //5.użytkownik nie posiada konta i chce się zarejestrować
         //6.użytkownik wypełnia formularz rejestracji i go wysyła status 200
         //7.użytkownik próbuje się zalogować , jeśli logowanie jest poprawne otrzymuje token status 200
+
         //8.użytkownik próbuje pobrać oferty z poprawnym tokenem w bazie nie ma ofert  otrzumuje 0 ofert status 200
         //given
         //when
@@ -72,8 +78,26 @@ public class TypicalScenarioUserWantToSeeJobOffersIntegrationTest extends BaseIn
                 () -> assertThat(mvcResultGet.getResponse().getStatus(), is(equalTo(200)))
         );
 
-        //9.w zewnętrznej bazie są nowe oferty
+        //9.w zewnętrznej bazie są 2 nowe oferty
+        //given
+        //when
+        //then
+        wireMockServer.stubFor(WireMock.get("/offers")
+                .willReturn(WireMock.aResponse()
+                        .withStatus(HttpStatus.OK.value())
+                        .withHeader("Content-Type", "application/json")
+                        .withBody(twoOffersJson())
+                )
+        );
+
         //10.apka odpytuje zewnętrzny serwer i dodaje nowe oferty
+        //given
+        //when
+        List<OfferDBResponseDto> jobResponse10 = offerFetcherScheduler.schedule();
+
+        //then
+        assertThat(jobResponse10.size(), is(equalTo(2)));
+
         //11.Użytkownik próbuje pobrać nieistniejącą ofertę – otrzymuje 204 - no content
         //given
         //when
@@ -91,10 +115,55 @@ public class TypicalScenarioUserWantToSeeJobOffersIntegrationTest extends BaseIn
         );
 
         //12.Użytkownik probuje pobrać istniejącą ofertę – otrzymuje ją z kodem 200
-        //13.apka odpytuje zewnętrzny serwer i dodaje nowe oferty
-        //14.jeśli nie ma ofert lub od ostatniego zapytania upłynęło 3 godziny to zostaje odpytana zdalna baza
-        //15.użytkownik wysyła zapytanie o oferty otrzymuje oferty z kodem 200
-        //16. dodawanie oferty
+        //given
+        String contentOfferJson12 = """
+                {
+                "position" : "junior",
+                "company": "firma krzak",
+                "salary": "free",
+                "offerUrl": "pobierz oferte"
+                }
+                """.trim();
+        ResultActions performPost12 = mockMvc.perform(post("/offers")
+                .content(contentOfferJson12)
+                .contentType(MediaType.APPLICATION_JSON));
+        MvcResult mvcResultPost12 = performPost12.andExpect(status().isCreated()).andReturn();
+        String responsePost12 = mvcResultPost12.getResponse().getContentAsString();
+        OfferDBResponseDto offerPostResult12 = objectMapper.readValue(responsePost12, new TypeReference<>() {
+        });
+        String offerId = offerPostResult12.id();
+
+        ResultActions performGetWithExistingId = mockMvc.perform(get("/offers/" + offerId)
+                .contentType(MediaType.APPLICATION_JSON_VALUE));
+
+        //then
+        MvcResult mvcResultGetWithExistingId = performGetWithExistingId.andExpect(status().isOk()).andReturn();
+        String responseGetWithExistingId = mvcResultGetWithExistingId.getResponse().getContentAsString();
+        OfferDBResponseDto offerDBResponseDto = objectMapper.readValue(responseGetWithExistingId, new TypeReference<>() {
+        });
+
+        assertAll(
+                () -> assertThat(offerDBResponseDto.offerUrl(), is(equalTo("pobierz oferte"))),
+                () -> assertThat(offerDBResponseDto.salary(), is(equalTo("free"))),
+                () -> assertThat(offerDBResponseDto.position(), is(equalTo("junior"))),
+                () -> assertThat(offerDBResponseDto.company(), is(equalTo("firma krzak"))),
+                () -> assertThat(offerDBResponseDto.id(), is(not(emptyString())))
+        );
+
+        //13.użytkownik wysyła zapytanie o oferty otrzymuje oferty z kodem 200
+        //given
+        //when
+        ResultActions performGet13 = mockMvc.perform(get("/offers")
+                .contentType(MediaType.APPLICATION_JSON_VALUE));
+        //then
+        MvcResult mvcResultGet13 = performGet13.andExpect(status().isOk()).andReturn();
+        String responseGet13 = mvcResultGet13.getResponse().getContentAsString();
+        List<OfferDBResponseDto> response13 = objectMapper.readValue(responseGet13, new TypeReference<>() {
+        });
+
+        assertThat(response13.size(), is(not(0)));
+
+        //14. użytkownik dodaje ofertę
         //given
         String contentOfferJson = """
                 {
@@ -105,24 +174,48 @@ public class TypicalScenarioUserWantToSeeJobOffersIntegrationTest extends BaseIn
                 }
                 """.trim();
         //when
-        ResultActions performPost = mockMvc.perform(post("/offers")
+        ResultActions performPost14 = mockMvc.perform(post("/offers")
                 .content(contentOfferJson)
                 .contentType(MediaType.APPLICATION_JSON));
 
         //then
-        MvcResult mvcResultPost = performPost.andExpect(status().isOk()).andReturn();
-        String responsePost = mvcResultPost.getResponse().getContentAsString();
-        OfferDBResponseDto offerPostResult = objectMapper.readValue(responsePost, new TypeReference<>() {
+        MvcResult mvcResultPost14 = performPost14.andExpect(status().isCreated()).andReturn();
+        String responsePost14 = mvcResultPost14.getResponse().getContentAsString();
+        OfferDBResponseDto offerPostResult14 = objectMapper.readValue(responsePost14, new TypeReference<>() {
         });
 
         assertAll(
-                () -> assertThat(offerPostResult.salary(), is(equalTo("free"))),
-                () -> assertThat(offerPostResult.offerUrl(), is(equalTo("poszukaj se sam"))),
-                () -> assertThat(offerPostResult.company(), is(equalTo("firma krzak"))),
-                () -> assertThat(offerPostResult.position(), is(equalTo("junior"))),
-                () -> assertNotNull(offerPostResult.id())
+                () -> assertThat(offerPostResult14.salary(), is(equalTo("free"))),
+                () -> assertThat(offerPostResult14.offerUrl(), is(equalTo("poszukaj se sam"))),
+                () -> assertThat(offerPostResult14.company(), is(equalTo("firma krzak"))),
+                () -> assertThat(offerPostResult14.position(), is(equalTo("junior"))),
+                () -> assertNotNull(offerPostResult14.id())
         );
 
-        //17.wylogowanie ręczne lub auto.
+        //15.uzytkownik usuwa dodaną ofertę i otrzymuje status 202
+        //given
+        String offerIdToDelete = offerPostResult14.id(); //offerta z poprzedniego kroku
+
+        //when
+        ResultActions performPost15 = mockMvc.perform(post("/offers/" + offerIdToDelete)
+                .contentType(MediaType.APPLICATION_JSON_VALUE));
+
+        //then
+        performPost15.andExpect(status().isAccepted());
+
+        ResultActions performGet15 = mockMvc.perform(get("/offers/" + offerIdToDelete)
+                .content(contentOfferJson)
+                .contentType(MediaType.APPLICATION_JSON));
+        MvcResult mvcResultGet15 = performGet15.andExpect(status().isNotFound()).andReturn();
+        String responseGet15 = mvcResultGet15.getResponse().getContentAsString();
+        OfferControllerErrorResponse errorResponse15 = objectMapper.readValue(responseGet15, new TypeReference<>() {
+        });
+
+        assertAll(
+                () -> assertThat(errorResponse15.message(), is(containsString(ExceptionMessages.OFFER_NOT_FOUND.toString()))),
+                () -> assertThat(errorResponse15.status(), is(equalTo(HttpStatus.NOT_FOUND)))
+        );
+
+        //16.wylogowanie ręczne lub auto.
     }
 }

@@ -20,7 +20,7 @@ public class OfferFetcherSchedulerTest extends BaseIntegrationTest {
     OfferFetchable remoteOfferClient;
 
     @Test
-    public void shouldRunClientOffersFetchingExactlyGivenTimes() {
+    public void should_run_client_offers_fetching_exactly_given_times() {
         await()
                 .atMost(Duration.ofSeconds(2))
                 .untilAsserted(() -> verify(remoteOfferClient, times(1)).fetchOffers());
