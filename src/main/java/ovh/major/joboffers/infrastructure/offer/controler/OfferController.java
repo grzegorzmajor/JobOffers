@@ -23,7 +23,7 @@ public class OfferController {
     private final OfferFacade offerFacade;
 
     @PostMapping
-    public ResponseEntity<OfferDBResponseDto> addOffers(@RequestBody @Valid OfferDBRequestDto offerToAdd) {
+    public ResponseEntity<OfferDBResponseDto> addOffer(@RequestBody @Valid OfferDBRequestDto offerToAdd) {
         OfferDBResponseDto offerDBResponseDto = offerFacade.saveOffer(offerToAdd);
         return ResponseEntity.ok(offerDBResponseDto);
     }
