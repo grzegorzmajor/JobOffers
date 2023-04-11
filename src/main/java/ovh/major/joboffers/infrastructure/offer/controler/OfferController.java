@@ -1,5 +1,6 @@
 package ovh.major.joboffers.infrastructure.offer.controler;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +20,7 @@ public class OfferController {
     private final OfferFacade offerFacade;
 
     @PostMapping
-    public ResponseEntity<OfferDBResponseDto> addOffers(@RequestBody OfferDBRequestDto offerToAdd) {
+    public ResponseEntity<OfferDBResponseDto> addOffers(@RequestBody @Valid OfferDBRequestDto offerToAdd) {
         OfferDBResponseDto offerDBResponseDto = offerFacade.saveOffer(offerToAdd);
         return ResponseEntity.ok(offerDBResponseDto);
     }
