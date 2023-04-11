@@ -7,20 +7,20 @@ import lombok.Builder;
 @Builder
 public record OfferDBRequestDto(
 
-        @NotNull(message = "position should be not null")
-        @NotEmpty(message = "position should be not empty")
+        @NotNull(message = "{position.null.validation.message}")
+        @NotEmpty(message = "{position.empty.validation.message}")
         String position,
 
-        @NotNull(message = "company should be not null")
-        @NotEmpty(message = "company should be not empty")
+        @NotNull(message = "{company.null.validation.message}")
+        @NotEmpty(message = "{company.empty.validation.message}")
         String company,
 
-        @NotNull(message = "salary should be not null")
-        @NotEmpty(message = "salary should be not empty")
+        @NotNull(message = "{salary.null.validation.message}")
+        @NotEmpty(message = "{salary.empty.validation.message}")
         String salary,
 
-        @NotNull(message = "offer url should be not null")
-        @NotEmpty(message = "offer url should be not empty")
+        @NotNull(message = "{url.null.validation.message}")
+        @NotEmpty(message = "{url.empty.validation.message}")
         String offerUrl
 ) {
 }
