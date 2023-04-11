@@ -47,7 +47,7 @@ public class OfferFetcherClient implements OfferFetchable {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (IllegalArgumentException exception) {
             //dodane ze względu na to że test should_throw_exception_500_when_fault_random_data_then_close() sie wywałał
-            log.error("Error while fetching offers using http client: " + exception.getMessage() + "exception: " + exception.getCause());
+            log.error("Error while fetching offers using http client: " + exception);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
