@@ -98,7 +98,8 @@ public class TypicalScenarioUserWantToSeeJobOffersIntegrationTest extends BaseIn
         //then
         assertThat(jobResponse10.size(), is(equalTo(2)));
 
-        //11.Użytkownik próbuje pobrać nieistniejącą ofertę – otrzymuje 204 - no content
+
+        //11.Użytkownik próbuje pobrać nieistniejącą ofertę – otrzymuje 404 - not found
         //given
         //when
         ResultActions performGetWithNotExistingId = mockMvc.perform(get("/offers/notexistingid")
@@ -150,7 +151,7 @@ public class TypicalScenarioUserWantToSeeJobOffersIntegrationTest extends BaseIn
                 () -> assertThat(offerDBResponseDto.id(), is(not(emptyString())))
         );
 
-        //13.użytkownik wysyła zapytanie o oferty otrzymuje oferty z kodem 200
+        //13.użytkownik wysyła zapytanie o oferty i otrzymuje oferty z kodem 200
         //given
         //when
         ResultActions performGet13 = mockMvc.perform(get("/offers")
@@ -161,9 +162,12 @@ public class TypicalScenarioUserWantToSeeJobOffersIntegrationTest extends BaseIn
         List<OfferDBResponseDto> response13 = objectMapper.readValue(responseGet13, new TypeReference<>() {
         });
 
-        assertThat(response13.size(), is(not(0)));
+        assertAll(
+                () -> assertThat(response13.size(), is(not(0))),
+                () -> assertThat(mvcResultGet13.getResponse().getStatus(), is(equalTo(200)))
+        );
 
-        //14. użytkownik dodaje ofertę
+        //14. użytkownik dodaje ofertę i otrzymuję ją w odpowiedzi z nadanym numerem id oraz otrzymuje status 201
         //given
         String contentOfferJson = """
                 {
@@ -189,19 +193,21 @@ public class TypicalScenarioUserWantToSeeJobOffersIntegrationTest extends BaseIn
                 () -> assertThat(offerPostResult14.offerUrl(), is(equalTo("poszukaj se sam"))),
                 () -> assertThat(offerPostResult14.company(), is(equalTo("firma krzak"))),
                 () -> assertThat(offerPostResult14.position(), is(equalTo("junior"))),
-                () -> assertNotNull(offerPostResult14.id())
+                () -> assertNotNull(offerPostResult14.id()),
+                () -> assertThat(mvcResultPost14.getResponse().getStatus(), is(equalTo(201)))
         );
 
-        //15.uzytkownik usuwa dodaną ofertę i otrzymuje status 202
+        //15.uzytkownik usuwa dodaną ofertę i otrzymuje status 204 no content oraz oferta zostaje usunięta.
         //given
-        String offerIdToDelete = offerPostResult14.id(); //offerta z poprzedniego kroku
+        String offerIdToDelete = offerPostResult14.id(); //offerta z poprzedniego kroku 14.
 
         //when
         ResultActions performPost15 = mockMvc.perform(post("/offers/" + offerIdToDelete)
                 .contentType(MediaType.APPLICATION_JSON_VALUE));
 
         //then
-        performPost15.andExpect(status().isAccepted());
+        performPost15.andExpect(status().isNoContent());
+        MvcResult mvcResultPost15 = performPost15.andExpect(status().isNotFound()).andReturn();
 
         ResultActions performGet15 = mockMvc.perform(get("/offers/" + offerIdToDelete)
                 .content(contentOfferJson)
@@ -212,6 +218,8 @@ public class TypicalScenarioUserWantToSeeJobOffersIntegrationTest extends BaseIn
         });
 
         assertAll(
+                () -> assertThat(mvcResultPost15.getResponse().getStatus(), is(equalTo(204))),
+                () -> assertThat(mvcResultGet15.getResponse().getStatus(), is(equalTo(404))),
                 () -> assertThat(errorResponse15.message(), is(containsString(ExceptionMessages.OFFER_NOT_FOUND.toString()))),
                 () -> assertThat(errorResponse15.status(), is(equalTo(HttpStatus.NOT_FOUND)))
         );

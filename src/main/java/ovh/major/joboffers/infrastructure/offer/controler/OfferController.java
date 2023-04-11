@@ -1,8 +1,6 @@
 package ovh.major.joboffers.infrastructure.offer.controler;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
@@ -33,12 +31,12 @@ public class OfferController {
     public ResponseEntity deleteOffer(@RequestBody @PathVariable String id) {
         try {
             offerFacade.findOfferById(id);
-        } catch(OfferNotFoundException exception) {
+        } catch (OfferNotFoundException exception) {
             log.error("in delete post request: " + exception.getMessage());
             return ResponseEntity.notFound().build();
         }
         offerFacade.deleteOfferById(id);
-        return ResponseEntity.accepted().build();
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping
