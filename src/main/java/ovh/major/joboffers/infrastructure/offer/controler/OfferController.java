@@ -29,7 +29,7 @@ public class OfferController {
     }
 
     @PostMapping("/{id}")
-    public void deleteOffers(@RequestBody String id) {
+    public void deleteOffer(@RequestBody String id) {
         offerFacade.deleteOfferById(id);
     }
 
