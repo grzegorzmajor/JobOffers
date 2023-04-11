@@ -64,6 +64,10 @@ public class OfferFacade {
         return OfferMapper.mapFromOfferToOfferDto(savedOffer);
     }
 
+    public void deleteOfferById(String id) {
+        offerRepository.deleteById(id);
+    }
+
     void deleteAllOffers() {
         offerRepository.deleteAll();
     }
@@ -71,5 +75,4 @@ public class OfferFacade {
     void deleteOfferByUrl(String url) {
         offerRepository.deleteByOfferUrl(url);
     }
-
 }

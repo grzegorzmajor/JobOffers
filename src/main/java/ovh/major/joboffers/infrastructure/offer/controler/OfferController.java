@@ -1,6 +1,8 @@
 package ovh.major.joboffers.infrastructure.offer.controler;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
@@ -8,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import ovh.major.joboffers.domain.offer.OfferFacade;
 import ovh.major.joboffers.domain.offer.dto.OfferDBRequestDto;
 import ovh.major.joboffers.domain.offer.dto.OfferDBResponseDto;
+import ovh.major.joboffers.domain.offer.exceptions.OfferNotFoundException;
 
 import java.util.List;
 
@@ -23,6 +26,11 @@ public class OfferController {
     public ResponseEntity<OfferDBResponseDto> addOffers(@RequestBody @Valid OfferDBRequestDto offerToAdd) {
         OfferDBResponseDto offerDBResponseDto = offerFacade.saveOffer(offerToAdd);
         return ResponseEntity.ok(offerDBResponseDto);
+    }
+
+    @PostMapping("/{id}")
+    public void deleteOffers(@RequestBody String id) {
+        offerFacade.deleteOfferById(id);
     }
 
     @GetMapping
