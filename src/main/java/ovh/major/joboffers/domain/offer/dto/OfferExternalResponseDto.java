@@ -4,7 +4,7 @@ import lombok.Builder;
 
 @Builder
 public record OfferExternalResponseDto(
-        String tittle,
+        String title,
         String company,
         String salary,
         String offerUrl

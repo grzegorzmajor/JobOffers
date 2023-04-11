@@ -20,7 +20,7 @@ public class OfferMapper {
         return Offer.builder()
                 .salary(externalOffer.salary())
                 .company(externalOffer.company())
-                .position(externalOffer.tittle())
+                .position(externalOffer.title())
                 .offerUrl(externalOffer.offerUrl())
                 .build();
     }
