@@ -3,17 +3,14 @@ package ovh.major.joboffers.infrastructure.offer.fetcher;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriComponentsBuilder;
 import ovh.major.joboffers.domain.offer.OfferFetchable;
 import ovh.major.joboffers.domain.offer.dto.OfferExternalResponseDto;
 
-import java.util.Collections;
 import java.util.List;
 
 @AllArgsConstructor
@@ -40,14 +37,18 @@ public class OfferFetcherClient implements OfferFetchable {
                     });
             final List<OfferExternalResponseDto> body = response.getBody();
             if (body == null) {
-                log.info("Response body was null! Returning empty list");
-                return Collections.emptyList();
+                log.info("Response body was null!");
+                throw new ResponseStatusException(HttpStatus.NO_CONTENT);
             }
             log.info("Success! Response body returned size is " + body.size());
             return body;
         } catch (ResourceAccessException exception) {
             log.error("Error while fetching offers using http client: " + exception.getMessage());
-            return Collections.emptyList();
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (IllegalArgumentException exception) {
+            //dodane ze względu na to że test should_throw_exception_500_when_fault_random_data_then_close() sie wywałał
+            log.error("Error while fetching offers using http client: " + exception.getMessage() + "exception: " + exception.getCause());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
