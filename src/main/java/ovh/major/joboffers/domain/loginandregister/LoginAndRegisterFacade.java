@@ -1,25 +1,25 @@
 package ovh.major.joboffers.domain.loginandregister;
 
+import lombok.AllArgsConstructor;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.stereotype.Component;
 import ovh.major.joboffers.domain.loginandregister.dto.RegisterUserDto;
 import ovh.major.joboffers.domain.loginandregister.dto.RegistrationResultDto;
 import ovh.major.joboffers.domain.loginandregister.dto.UserDto;
 import ovh.major.joboffers.domain.loginandregister.exceptions.UserIsExistException;
-import ovh.major.joboffers.domain.loginandregister.exceptions.UserNotFoundException;
 
 import static ovh.major.joboffers.domain.loginandregister.exceptions.ExceptionMessages.USER_NOT_FOUND;
 
+@AllArgsConstructor
+@Component
 public class LoginAndRegisterFacade {
 
-    private final UsersRepository usersRepository;
+    private final UsersRepository repository;
 
-    public LoginAndRegisterFacade(UsersRepository usersRepository) {
-        this.usersRepository = usersRepository;
-    }
-
-    public UserDto findByUsername(String username) {
-        return usersRepository.findByUsername(username)
+    public UserDto findByName(String name) {
+        return repository.findByName(name)
                 .map(user -> new UserDto(user.id(), user.name(), user.password()))
-                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
+                .orElseThrow(() -> new BadCredentialsException(USER_NOT_FOUND.toString()) );
     }
 
     public RegistrationResultDto register(RegisterUserDto registerUserDto) {
@@ -27,12 +27,7 @@ public class LoginAndRegisterFacade {
                 .name(registerUserDto.name())
                 .password(registerUserDto.password())
                 .build();
-        User savedUser;
-        try {
-            savedUser = usersRepository.save(user);
-        } catch (UserIsExistException exception) {
-            return new RegistrationResultDto(null, registerUserDto.name(), false);
-        }
+        User savedUser = repository.save(user);
         return new RegistrationResultDto(savedUser.id(), savedUser.name(), true);
     }
 }

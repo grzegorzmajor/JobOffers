@@ -1,16 +1,15 @@
 package ovh.major.joboffers.domain.loginandregister;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.security.authentication.BadCredentialsException;
 import ovh.major.joboffers.domain.loginandregister.dto.RegisterUserDto;
 import ovh.major.joboffers.domain.loginandregister.dto.RegistrationResultDto;
 import ovh.major.joboffers.domain.loginandregister.dto.UserDto;
-import ovh.major.joboffers.domain.loginandregister.exceptions.UserNotFoundException;
 
 import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static ovh.major.joboffers.domain.loginandregister.exceptions.ExceptionMessages.USER_NOT_FOUND;
 
 
@@ -26,12 +25,12 @@ public class LoginAndRegisterFacadeTest {
         final String username = "user";
 
         //when
-        Throwable thrown = catchThrowable(() -> loginAndRegisterFacade.findByUsername(username));
+        Throwable thrown = catchThrowable(() -> loginAndRegisterFacade.findByName(username));
 
         //then
         assertAll(
-                () -> assertThat(thrown, is(instanceOf(UserNotFoundException.class))),
-                () -> assertThat(thrown.getMessage(), is(equalTo(new UserNotFoundException(USER_NOT_FOUND).getMessage())))
+                () -> assertThat(thrown, is(instanceOf(BadCredentialsException.class))),
+                () -> assertThat(thrown.getMessage(), is(equalTo(USER_NOT_FOUND.toString())))
         );
     }
 
@@ -41,7 +40,7 @@ public class LoginAndRegisterFacadeTest {
         RegistrationResultDto register = loginAndRegisterFacade.register(registerUserDto);
 
         //when
-        UserDto userResult = loginAndRegisterFacade.findByUsername(register.name());
+        UserDto userResult = loginAndRegisterFacade.findByName(register.name());
 
         //then
         assertThat(userResult, is(equalTo(new UserDto(register.id(), "name", "pass"))));
@@ -56,26 +55,8 @@ public class LoginAndRegisterFacadeTest {
         //then
         assertAll(
                 () -> assertThat(register.registered(), is(true)),
-                () -> assertThat(loginAndRegisterFacade.findByUsername(register.name()).name(),
+                () -> assertThat(loginAndRegisterFacade.findByName(register.name()).name(),
                         is(equalTo(registerUserDto.name())))
         );
-    }
-
-    @Test
-    public void shouldNotRegisterUserAndThrowExceptionIfUserExists() {
-        //given
-        loginAndRegisterFacade.register(registerUserDto);
-
-        //when
-        RegistrationResultDto register = loginAndRegisterFacade.register(registerUserDto);
-
-        //then
-        assertAll(
-                () -> assertFalse(register.registered()),
-                () -> assertThat(register.name(), is(equalTo(registerUserDto.name()))),
-                () -> assertThat(register.id(), is(nullValue())),
-                () -> assertThat(usersRepository.size(), is(equalTo(1)))
-        );
-
     }
 }

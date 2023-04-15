@@ -7,14 +7,13 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import ovh.major.joboffers.domain.offer.exceptions.DuplicateOfferException;
 import ovh.major.joboffers.domain.offer.exceptions.OfferNotFoundException;
 
 import java.util.Collections;
 
 @ControllerAdvice
 @Log4j2
-public class OfferControllerErrorHandler {
+class OfferControllerErrorHandler {
 
     @ExceptionHandler(OfferNotFoundException.class)
     @ResponseBody

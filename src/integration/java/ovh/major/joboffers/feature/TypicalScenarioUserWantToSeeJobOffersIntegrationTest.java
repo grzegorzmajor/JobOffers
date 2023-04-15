@@ -2,28 +2,37 @@ package ovh.major.joboffers.feature;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.github.tomakehurst.wiremock.client.WireMock;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import ovh.major.joboffers.BaseIntegrationTest;
 import ovh.major.joboffers.SampleOfferResponse;
+import ovh.major.joboffers.domain.loginandregister.dto.RegistrationResultDto;
 import ovh.major.joboffers.domain.offer.dto.OfferDBResponseDto;
 import ovh.major.joboffers.domain.offer.exceptions.ExceptionMessages;
+import ovh.major.joboffers.infrastructure.loginandregister.controler.dto.JwtResponseDto;
 import ovh.major.joboffers.infrastructure.offer.controler.error.OfferControllerErrorResponse;
 import ovh.major.joboffers.infrastructure.offer.scheduler.OfferFetcherScheduler;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+
 
 public class TypicalScenarioUserWantToSeeJobOffersIntegrationTest extends BaseIntegrationTest implements SampleOfferResponse {
 
@@ -49,21 +58,101 @@ public class TypicalScenarioUserWantToSeeJobOffersIntegrationTest extends BaseIn
         //2.apka odpytuje zewnętrzną bazę i dodaje 0 ofert
         //given
         //when
-        List<OfferDBResponseDto> jobResponse = offerFetcherScheduler.schedule();
+        List<OfferDBResponseDto> jobResponse2 = offerFetcherScheduler.schedule();
 
         //then
-        assertThat(jobResponse.size(), is(equalTo(0)));
+        assertThat(jobResponse2.size(), is(equalTo(0)));
 
         //3.użytkownik próbuje się zalogować i otrzymuje brak autoryzacji 401
-        //4.użytkownik próbuje pobrać oferty i otrzymuje brak autoryzacji 401
-        //5.użytkownik nie posiada konta i chce się zarejestrować
-        //6.użytkownik wypełnia formularz rejestracji i go wysyła status 200
-        //7.użytkownik próbuje się zalogować , jeśli logowanie jest poprawne otrzymuje token status 200
-
-        //8.użytkownik próbuje pobrać oferty z poprawnym tokenem w bazie nie ma ofert  otrzumuje 0 ofert status 200
         //given
         //when
+        ResultActions failedLoginRequest = mockMvc.perform(post("/token")
+                .content("""
+                        {
+                        "name": "user",
+                        "password": "pass"
+                        }
+                        """.trim())
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+        );
+
+        //then
+        failedLoginRequest
+                .andExpect(status().isUnauthorized())
+                .andExpect(content().json("""
+                            {
+                            "message": "Bad Credentials",
+                            "status": "UNAUTHORIZED"
+                            }
+                        """.trim()));
+
+
+        //4.użytkownik próbuje pobrać oferty i otrzymuje brak autoryzacji 401 /brak tokena
+        //given
+        //when
+        ResultActions failedGetOffersRequest4 = mockMvc.perform(get("/offers")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+        );
+
+        //then
+        failedGetOffersRequest4.andExpect(status().isForbidden());
+
+        //5.użytkownik nie posiada konta i chce się zarejestrować, wysyła formularz rejest. i otrzymuje status 201
+        //given
+        //when
+        ResultActions registerAction5 = mockMvc.perform(post("/register")
+                .content("""
+                        {
+                        "name": "someUser",
+                        "password": "somePassword"
+                        }
+                        """.trim())
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+        );
+
+        //then
+        MvcResult registerActionResult5 = registerAction5.andExpect(status().isCreated()).andReturn();
+        String registerActionResultJson5 = registerActionResult5.getResponse().getContentAsString();
+        RegistrationResultDto registrationResultDto5 = objectMapper.readValue(registerActionResultJson5, RegistrationResultDto.class);
+        assertAll(
+                () -> assertThat(registrationResultDto5.name(),is(equalTo("someUser"))),
+                () -> assertTrue(registrationResultDto5.registered()),
+                () -> assertThat(registrationResultDto5.id(),is(not(nullValue())))
+        );
+
+        //6.użytkownik próbuje się zalogować , jeśli logowanie jest poprawne otrzymuje token status 200
+
+        ResultActions loginRequest6 = mockMvc.perform(post("/token")
+                .content("""
+                        {
+                        "name": "someUser",
+                        "password": "somePassword"
+                        }
+                        """.trim())
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+        );
+
+        //then
+        MvcResult mvcResultLoginRequest6 = loginRequest6.andExpect(status().isOk()).andReturn();
+
+        String responseJson6 = mvcResultLoginRequest6.getResponse().getContentAsString();
+        JwtResponseDto response6 = objectMapper.readValue(responseJson6, new TypeReference<>() {
+        });
+        assertAll(
+                () -> assertTrue(response6.name().contains("someUser")),
+                () -> assertTrue(!response6.token().isEmpty()),
+                () -> assertTrue(!response6.token().isBlank()),
+                () -> Assertions.assertThat(response6.token()).matches(Pattern.compile("^([A-Za-z0-9-_=]+\\.)+([A-Za-z0-9-_=])+\\.?$"))
+        );
+
+
+
+        //7.użytkownik próbuje pobrać oferty z poprawnym tokenem w bazie nie ma ofert  otrzumuje 0 ofert status 200
+        //given
+        String token = response6.token();
+        //when
         ResultActions performGet = mockMvc.perform(get("/offers")
+                .header("Authorization", "Bearer " + token)
                 .contentType(MediaType.APPLICATION_JSON_VALUE));
 
         //then
@@ -78,7 +167,7 @@ public class TypicalScenarioUserWantToSeeJobOffersIntegrationTest extends BaseIn
                 () -> assertThat(mvcResultGet.getResponse().getStatus(), is(equalTo(200)))
         );
 
-        //9.w zewnętrznej bazie są 2 nowe oferty
+        //8.w zewnętrznej bazie są 2 nowe oferty
         //given
         //when
         //then
@@ -90,19 +179,20 @@ public class TypicalScenarioUserWantToSeeJobOffersIntegrationTest extends BaseIn
                 )
         );
 
-        //10.apka odpytuje zewnętrzny serwer i dodaje nowe oferty
+        //9.apka odpytuje zewnętrzny serwer i dodaje nowe oferty
         //given
         //when
-        List<OfferDBResponseDto> jobResponse10 = offerFetcherScheduler.schedule();
+        List<OfferDBResponseDto> jobResponse9 = offerFetcherScheduler.schedule();
 
         //then
-        assertThat(jobResponse10.size(), is(equalTo(2)));
+        assertThat(jobResponse9.size(), is(equalTo(2)));
 
 
-        //11.Użytkownik próbuje pobrać nieistniejącą ofertę – otrzymuje 404 - not found
+        //10.Użytkownik próbuje pobrać nieistniejącą ofertę – otrzymuje 404 - not found
         //given
         //when
         ResultActions performGetWithNotExistingId = mockMvc.perform(get("/offers/notexistingid")
+                .header("Authorization", "Bearer " + token)
                 .contentType(MediaType.APPLICATION_JSON_VALUE));
         //then
         MvcResult mvcResultGetWithNotExistingId = performGetWithNotExistingId.andExpect(status().isNotFound()).andReturn();
@@ -115,9 +205,9 @@ public class TypicalScenarioUserWantToSeeJobOffersIntegrationTest extends BaseIn
                 () -> assertThat(errorResponse.status(), is(equalTo(HttpStatus.NOT_FOUND)))
         );
 
-        //12.Użytkownik probuje pobrać istniejącą ofertę – otrzymuje ją z kodem 200
+        //11.Użytkownik probuje pobrać istniejącą ofertę – otrzymuje ją z kodem 200
         //given
-        String contentOfferJson12 = """
+        String contentOfferJson11 = """
                 {
                 "position" : "junior",
                 "company": "firma krzak",
@@ -125,16 +215,18 @@ public class TypicalScenarioUserWantToSeeJobOffersIntegrationTest extends BaseIn
                 "offerUrl": "pobierz oferte"
                 }
                 """.trim();
-        ResultActions performPost12 = mockMvc.perform(post("/offers")
-                .content(contentOfferJson12)
+        ResultActions performPost11 = mockMvc.perform(post("/offers")
+                .header("Authorization", "Bearer " + token)
+                .content(contentOfferJson11)
                 .contentType(MediaType.APPLICATION_JSON));
-        MvcResult mvcResultPost12 = performPost12.andExpect(status().isCreated()).andReturn();
-        String responsePost12 = mvcResultPost12.getResponse().getContentAsString();
-        OfferDBResponseDto offerPostResult12 = objectMapper.readValue(responsePost12, new TypeReference<>() {
+        MvcResult mvcResultPost11 = performPost11.andExpect(status().isCreated()).andReturn();
+        String responsePost11 = mvcResultPost11.getResponse().getContentAsString();
+        OfferDBResponseDto offerPostResult11 = objectMapper.readValue(responsePost11, new TypeReference<>() {
         });
-        String offerId = offerPostResult12.id();
+        String offerId = offerPostResult11.id();
 
         ResultActions performGetWithExistingId = mockMvc.perform(get("/offers/" + offerId)
+                .header("Authorization", "Bearer " + token)
                 .contentType(MediaType.APPLICATION_JSON_VALUE));
 
         //then
@@ -151,23 +243,24 @@ public class TypicalScenarioUserWantToSeeJobOffersIntegrationTest extends BaseIn
                 () -> assertThat(offerDBResponseDto.id(), is(not(emptyString())))
         );
 
-        //13.użytkownik wysyła zapytanie o oferty i otrzymuje oferty z kodem 200
+        //12.użytkownik wysyła zapytanie o oferty i otrzymuje oferty z kodem 200
         //given
         //when
-        ResultActions performGet13 = mockMvc.perform(get("/offers")
+        ResultActions performGet12 = mockMvc.perform(get("/offers")
+                .header("Authorization", "Bearer " + token)
                 .contentType(MediaType.APPLICATION_JSON_VALUE));
         //then
-        MvcResult mvcResultGet13 = performGet13.andExpect(status().isOk()).andReturn();
-        String responseGet13 = mvcResultGet13.getResponse().getContentAsString();
-        List<OfferDBResponseDto> response13 = objectMapper.readValue(responseGet13, new TypeReference<>() {
+        MvcResult mvcResultGet12 = performGet12.andExpect(status().isOk()).andReturn();
+        String responseGet12 = mvcResultGet12.getResponse().getContentAsString();
+        List<OfferDBResponseDto> response12 = objectMapper.readValue(responseGet12, new TypeReference<>() {
         });
 
         assertAll(
-                () -> assertThat(response13.size(), is(not(0))),
-                () -> assertThat(mvcResultGet13.getResponse().getStatus(), is(equalTo(200)))
+                () -> assertThat(response12.size(), is(not(0))),
+                () -> assertThat(mvcResultGet12.getResponse().getStatus(), is(equalTo(200)))
         );
 
-        //14. użytkownik dodaje ofertę i otrzymuję ją w odpowiedzi z nadanym numerem id oraz otrzymuje status 201
+        //13. użytkownik dodaje ofertę i otrzymuję ją w odpowiedzi z nadanym numerem id oraz otrzymuje status 201
         //given
         String contentOfferJson = """
                 {
@@ -178,52 +271,55 @@ public class TypicalScenarioUserWantToSeeJobOffersIntegrationTest extends BaseIn
                 }
                 """.trim();
         //when
-        ResultActions performPost14 = mockMvc.perform(post("/offers")
+        ResultActions performPost13 = mockMvc.perform(post("/offers")
+                .header("Authorization", "Bearer " + token)
                 .content(contentOfferJson)
                 .contentType(MediaType.APPLICATION_JSON));
 
         //then
-        MvcResult mvcResultPost14 = performPost14.andExpect(status().isCreated()).andReturn();
-        String responsePost14 = mvcResultPost14.getResponse().getContentAsString();
-        OfferDBResponseDto offerPostResult14 = objectMapper.readValue(responsePost14, new TypeReference<>() {
+        MvcResult mvcResultPost13 = performPost13.andExpect(status().isCreated()).andReturn();
+        String responsePost13 = mvcResultPost13.getResponse().getContentAsString();
+        OfferDBResponseDto offerPostResult13 = objectMapper.readValue(responsePost13, new TypeReference<>() {
         });
 
         assertAll(
-                () -> assertThat(offerPostResult14.salary(), is(equalTo("free"))),
-                () -> assertThat(offerPostResult14.offerUrl(), is(equalTo("poszukaj se sam"))),
-                () -> assertThat(offerPostResult14.company(), is(equalTo("firma krzak"))),
-                () -> assertThat(offerPostResult14.position(), is(equalTo("junior"))),
-                () -> assertNotNull(offerPostResult14.id()),
-                () -> assertThat(mvcResultPost14.getResponse().getStatus(), is(equalTo(201)))
+                () -> assertThat(offerPostResult13.salary(), is(equalTo("free"))),
+                () -> assertThat(offerPostResult13.offerUrl(), is(equalTo("poszukaj se sam"))),
+                () -> assertThat(offerPostResult13.company(), is(equalTo("firma krzak"))),
+                () -> assertThat(offerPostResult13.position(), is(equalTo("junior"))),
+                () -> assertNotNull(offerPostResult13.id()),
+                () -> assertThat(mvcResultPost13.getResponse().getStatus(), is(equalTo(201)))
         );
 
-        //15.uzytkownik usuwa dodaną ofertę i otrzymuje status 204 no content oraz oferta zostaje usunięta.
+        //14.uzytkownik usuwa dodaną ofertę i otrzymuje status 204 no content oraz oferta zostaje usunięta.
         //given
-        String offerIdToDelete = offerPostResult14.id(); //offerta z poprzedniego kroku 14.
+        String offerIdToDelete = offerPostResult13.id(); //offerta z poprzedniego kroku 13.
 
         //when
-        ResultActions performPost15 = mockMvc.perform(post("/offers/" + offerIdToDelete)
+        ResultActions performPost14 = mockMvc.perform(post("/offers/" + offerIdToDelete)
+                .header("Authorization", "Bearer " + token)
                 .contentType(MediaType.APPLICATION_JSON_VALUE));
 
         //then
-        performPost15.andExpect(status().isNoContent());
-        MvcResult mvcResultPost15 = performPost15.andExpect(status().isNoContent()).andReturn();
+        performPost14.andExpect(status().isNoContent());
+        MvcResult mvcResultPost14 = performPost14.andExpect(status().isNoContent()).andReturn();
 
-        ResultActions performGet15 = mockMvc.perform(get("/offers/" + offerIdToDelete)
+        ResultActions performGet14 = mockMvc.perform(get("/offers/" + offerIdToDelete)
+                .header("Authorization", "Bearer " + token)
                 .content(contentOfferJson)
                 .contentType(MediaType.APPLICATION_JSON));
-        MvcResult mvcResultGet15 = performGet15.andExpect(status().isNotFound()).andReturn();
-        String responseGet15 = mvcResultGet15.getResponse().getContentAsString();
-        OfferControllerErrorResponse errorResponse15 = objectMapper.readValue(responseGet15, new TypeReference<>() {
+        MvcResult mvcResultGet14 = performGet14.andExpect(status().isNotFound()).andReturn();
+        String responseGet14 = mvcResultGet14.getResponse().getContentAsString();
+        OfferControllerErrorResponse errorResponse14 = objectMapper.readValue(responseGet14, new TypeReference<>() {
         });
 
         assertAll(
-                () -> assertThat(mvcResultPost15.getResponse().getStatus(), is(equalTo(204))),
-                () -> assertThat(mvcResultGet15.getResponse().getStatus(), is(equalTo(404))),
-                () -> assertThat(errorResponse15.message(), is(containsString(ExceptionMessages.OFFER_NOT_FOUND.toString()))),
-                () -> assertThat(errorResponse15.status(), is(equalTo(HttpStatus.NOT_FOUND)))
+                () -> assertThat(mvcResultPost14.getResponse().getStatus(), is(equalTo(204))),
+                () -> assertThat(mvcResultGet14.getResponse().getStatus(), is(equalTo(404))),
+                () -> assertThat(errorResponse14.message(), is(containsString(ExceptionMessages.OFFER_NOT_FOUND.toString()))),
+                () -> assertThat(errorResponse14.status(), is(equalTo(HttpStatus.NOT_FOUND)))
         );
 
-        //16.wylogowanie ręczne lub auto.
+        //15.wylogowanie ręczne lub auto.
     }
 }

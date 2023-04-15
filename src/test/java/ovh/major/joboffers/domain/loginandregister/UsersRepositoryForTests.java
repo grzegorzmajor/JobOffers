@@ -1,35 +1,149 @@
 package ovh.major.joboffers.domain.loginandregister;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.repository.query.FluentQuery;
 
-import ovh.major.joboffers.domain.loginandregister.exceptions.UserIsExistException;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
-import static ovh.major.joboffers.domain.loginandregister.exceptions.ExceptionMessages.USER_EXISTS;
 
 public class UsersRepositoryForTests implements UsersRepository {
-    List<User> usersList = new ArrayList<>();
+
+    Map<String, User> database = new ConcurrentHashMap<>();
 
     @Override
-    public Optional<User> findByUsername(String username) {
-        return usersList.stream()
-                .filter(user -> username.equals(user.name()))
-                .findFirst();
+    public Optional<User> findByName(String username) {
+        return Optional.ofNullable(database.get(username));
     }
 
     @Override
-    public User save(User user) {
-        final Optional<User> foundUser = findByUsername(user.name());
-        if (!foundUser.isPresent()) {
-            usersList.add(user);
-        } else {
-            throw new UserIsExistException(USER_EXISTS);
-        }
-        return user;
+    public <S extends User> S save(S entity) {
+
+        UUID id = UUID.randomUUID();
+        User user = new User(
+                id.toString(),
+                entity.name(),
+                entity.password()
+        );
+        database.put(user.name(), user);
+        return (S) user;
     }
 
     public int size() {
-        return usersList.size();
+        return database.size();
+    }
+
+    @Override
+    public <S extends User> S insert(S entity) {
+        return null;
+    }
+
+    @Override
+    public <S extends User> List<S> insert(Iterable<S> entities) {
+        return null;
+    }
+
+    @Override
+    public <S extends User> Optional<S> findOne(Example<S> example) {
+        return Optional.empty();
+    }
+
+    @Override
+    public <S extends User> List<S> findAll(Example<S> example) {
+        return null;
+    }
+
+    @Override
+    public <S extends User> List<S> findAll(Example<S> example, Sort sort) {
+        return null;
+    }
+
+    @Override
+    public <S extends User> Page<S> findAll(Example<S> example, Pageable pageable) {
+        return null;
+    }
+
+    @Override
+    public <S extends User> long count(Example<S> example) {
+        return 0;
+    }
+
+    @Override
+    public <S extends User> boolean exists(Example<S> example) {
+        return false;
+    }
+
+    @Override
+    public <S extends User, R> R findBy(Example<S> example, Function<FluentQuery.FetchableFluentQuery<S>, R> queryFunction) {
+        return null;
+    }
+
+    @Override
+    public <S extends User> List<S> saveAll(Iterable<S> entities) {
+        return null;
+    }
+
+    @Override
+    public Optional<User> findById(String s) {
+        return Optional.empty();
+    }
+
+    @Override
+    public boolean existsById(String s) {
+        return false;
+    }
+
+    @Override
+    public List<User> findAll() {
+        return null;
+    }
+
+    @Override
+    public List<User> findAllById(Iterable<String> strings) {
+        return null;
+    }
+
+    @Override
+    public long count() {
+        return 0;
+    }
+
+    @Override
+    public void deleteById(String s) {
+
+    }
+
+    @Override
+    public void delete(User entity) {
+
+    }
+
+    @Override
+    public void deleteAllById(Iterable<? extends String> strings) {
+
+    }
+
+    @Override
+    public void deleteAll(Iterable<? extends User> entities) {
+
+    }
+
+    @Override
+    public void deleteAll() {
+
+    }
+
+    @Override
+    public List<User> findAll(Sort sort) {
+        return null;
+    }
+
+    @Override
+    public Page<User> findAll(Pageable pageable) {
+        return null;
     }
 }

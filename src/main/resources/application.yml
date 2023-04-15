@@ -16,5 +16,20 @@ offer:
         readTimeout: 1000
   scheduler:
     delay: PT3H
+
 scheduling:
   enabled: true
+
+auth:
+  jwt:
+    expirationDays: 30
+    secret: ${JWT_SECRET}
+    issuer: job-offers-backend
+
+# 1) Define the security scheme type (HTTP bearer)
+components:
+  securitySchemes:
+    bearerAuth: # arbitrary name for the security scheme
+      type: http
+      scheme: Bearer
+      bearerFormat: JWT    # optional, arbitrary value for documentation purposes
