@@ -1,6 +1,7 @@
 package ovh.major.joboffers.domain.offer;
 
 import lombok.AllArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import ovh.major.joboffers.domain.offer.dto.OfferDBRequestDto;
 import ovh.major.joboffers.domain.offer.dto.OfferDBResponseDto;
 import ovh.major.joboffers.domain.offer.exceptions.OfferNotFoundException;
@@ -24,6 +25,7 @@ public class OfferFacade {
                 .toList();
     }
 
+    @Cacheable(cacheNames = "jobOffers")
     public List<OfferDBResponseDto> findAllOffers() {
         List<Offer> offers = offerRepository.findAll();
         return offers.stream()

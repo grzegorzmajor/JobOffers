@@ -32,6 +32,9 @@
 
         <java-jwt.version>4.0.0</java-jwt.version>
 
+        <redis.version>4.3.2</redis.version>
+        <spring-data-redis.version>3.0.4</spring-data-redis.version>
+
     </properties>
 
     <dependencies>
@@ -70,7 +73,6 @@
             <scope>test</scope>
         </dependency>
 
-
         <!-- JWT -->
         <dependency>
             <groupId>com.auth0</groupId>
@@ -95,17 +97,11 @@
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
             <version>${springdoc.version}</version>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>org.springdoc</groupId>-->
-<!--            <artifactId>springdoc-openapi-starter-webmvc-api</artifactId>-->
-<!--            <version>${springdoc.version}</version>-->
-<!--        </dependency>-->
         <dependency>
             <groupId>org.springframework.restdocs</groupId>
             <artifactId>spring-restdocs-mockmvc</artifactId>
             <version>${springrestdocs.version}</version>
         </dependency>
-
 
         <!-- https://mvnrepository.com/artifact/org.testcontainers/testcontainers -->
         <dependency>
@@ -163,6 +159,24 @@
             <artifactId>JobOffers</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+
+        <!-- REDIS -->
+
+        <!-- https://mvnrepository.com/artifact/redis.clients/jedis -->
+        <dependency>
+            <groupId>redis.clients</groupId>
+            <artifactId>jedis</artifactId>
+            <version>${redis.version}</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.springframework.data/spring-data-redis -->
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-redis</artifactId>
+            <version>${spring-data-redis.version}</version>
+        </dependency>
+
+
+
 
     </dependencies>
 

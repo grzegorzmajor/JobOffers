@@ -3,6 +3,8 @@ package ovh.major.joboffers.domain.offer.dto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 
+import java.io.Serializable;
+
 @Schema(
         description = "The object returned by access methods to the database."
 )
@@ -37,5 +39,5 @@ public record OfferDBResponseDto(
                 example = "http://...."
         )
         String offerUrl
-) {
+) implements Serializable {
 }
