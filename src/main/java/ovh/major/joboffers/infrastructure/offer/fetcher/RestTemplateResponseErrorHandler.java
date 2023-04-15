@@ -10,7 +10,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.io.IOException;
 
 @Log4j2
-public class RestTemplateResponseErrorHandler extends DefaultResponseErrorHandler {
+class RestTemplateResponseErrorHandler extends DefaultResponseErrorHandler {
 
     @Override
     public void handleError(ClientHttpResponse httpResponse) throws IOException {

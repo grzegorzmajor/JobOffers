@@ -2,6 +2,7 @@ package ovh.major.joboffers.controler.error;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.ResultActions;
@@ -24,6 +25,7 @@ public class OfferControllerErrorIntegrationTest extends BaseIntegrationTest {
     }
 
     @Test
+    @WithMockUser
     public void should_return_conflict_409_when_added_offer_with_same_ofer_url() throws Exception {
         //Step 1
         //given
@@ -67,6 +69,7 @@ public class OfferControllerErrorIntegrationTest extends BaseIntegrationTest {
     }
 
     @Test
+    @WithMockUser
     void should_return_404_not_found_when_delete_offer_with_an_id_that_doesnt_exist() throws Exception {
         //given
         String id = "takie id nie istnieje";

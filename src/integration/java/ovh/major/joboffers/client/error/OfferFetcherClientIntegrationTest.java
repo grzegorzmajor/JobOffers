@@ -158,19 +158,19 @@ public class OfferFetcherClientIntegrationTest implements SampleOfferResponse {
         assertThat(throwable.getMessage()).isEqualTo("401 UNAUTHORIZED");
     }
     @Test
-    void should_throw_exception_500_when_fault_random_data_then_close() {
+    void shouldThrowException500WhenFaultRandomDataThenClose() {
         // given
         wireMockServer.stubFor(WireMock.get("/offers")
                 .willReturn(WireMock.aResponse()
                         .withStatus(HttpStatus.SC_OK)
-                        .withHeader(CONTENT_TYPE_HEADER_KEY, APPLICATION_JSON_CONTENT_TYPE_VALUE)
+                        .withHeader("Content-Type", "application/json")
                         .withFault(Fault.RANDOM_DATA_THEN_CLOSE)));
 
         // when
         Throwable throwable = catchThrowable(() -> remoteOfferClient.fetchOffers());
 
         // then
-        log.error("xxxxx:  " + throwable.toString());
+        // log.error("xxxxx:  " + throwable.toString());
         assertThat(throwable).isInstanceOf(ResponseStatusException.class);
         assertThat(throwable.getMessage()).isEqualTo("500 INTERNAL_SERVER_ERROR");
     }
