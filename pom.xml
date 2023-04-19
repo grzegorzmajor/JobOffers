@@ -154,11 +154,6 @@
             <version>${wiremock-jre8.version}</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>ovh.major</groupId>
-            <artifactId>JobOffers</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
 
         <!-- REDIS -->
 
