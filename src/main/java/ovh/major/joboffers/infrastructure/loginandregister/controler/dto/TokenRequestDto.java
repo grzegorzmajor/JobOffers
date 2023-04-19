@@ -9,16 +9,14 @@ public record TokenRequestDto (
 
         @Schema(
                 description = "User name",
-                example = "userName",
-                required = true
+                example = "userName"
         )
         @NotBlank(message = "{username.not.blank}")
         String name,
 
         @Schema(
                 description = "Password",
-                example = "pass",
-                required = true
+                example = "pass"
         )
         @NotBlank(message = "{password.not.blank}")
         String password
