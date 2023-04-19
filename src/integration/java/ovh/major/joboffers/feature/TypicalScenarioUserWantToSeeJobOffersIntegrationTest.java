@@ -42,8 +42,7 @@ public class TypicalScenarioUserWantToSeeJobOffersIntegrationTest extends BaseIn
     @Test
     public void user_want_to_see_offers_but_have_to_be_logged_in_and_external_server_should_have_some_offers() throws Exception {
 
-        //#klient chce pobrać dostępne oferty ale musi być zalogowany
-        //1.nie ma ofert na serwerze
+        //1.there are no offers on the server
         //given
         //when
         //then
@@ -55,7 +54,7 @@ public class TypicalScenarioUserWantToSeeJobOffersIntegrationTest extends BaseIn
                 )
         );
 
-        //2.apka odpytuje zewnętrzną bazę i dodaje 0 ofert
+        //2.scheduler queries the external database and adds 0 offers
         //given
         //when
         List<OfferDBResponseDto> jobResponse2 = offerFetcherScheduler.schedule();
@@ -63,7 +62,7 @@ public class TypicalScenarioUserWantToSeeJobOffersIntegrationTest extends BaseIn
         //then
         assertThat(jobResponse2.size(), is(equalTo(0)));
 
-        //3.użytkownik próbuje się zalogować i otrzymuje brak autoryzacji 401
+        //3.user tries to log in and gets 401 Unauthorized
         //given
         //when
         ResultActions failedLoginRequest = mockMvc.perform(post("/token")
@@ -87,7 +86,7 @@ public class TypicalScenarioUserWantToSeeJobOffersIntegrationTest extends BaseIn
                         """.trim()));
 
 
-        //4.użytkownik próbuje pobrać oferty i otrzymuje brak autoryzacji 401 /brak tokena
+        //4.the user tries to download offers and receives 401 Unauthorized / No Token
         //given
         //when
         ResultActions failedGetOffersRequest4 = mockMvc.perform(get("/offers")
@@ -97,7 +96,7 @@ public class TypicalScenarioUserWantToSeeJobOffersIntegrationTest extends BaseIn
         //then
         failedGetOffersRequest4.andExpect(status().isForbidden());
 
-        //5.użytkownik nie posiada konta i chce się zarejestrować, wysyła formularz rejest. i otrzymuje status 201
+        //5.the user does not have an account and wants to register, he submits the registration form and receives the status 201
         //given
         //when
         ResultActions registerAction5 = mockMvc.perform(post("/register")
@@ -120,7 +119,9 @@ public class TypicalScenarioUserWantToSeeJobOffersIntegrationTest extends BaseIn
                 () -> assertThat(registrationResultDto5.id(),is(not(nullValue())))
         );
 
-        //6.użytkownik próbuje się zalogować , jeśli logowanie jest poprawne otrzymuje token status 200
+        //6.the user tries to log in, if the login is correct, he receives a status 200 token
+        //given
+        //when
 
         ResultActions loginRequest6 = mockMvc.perform(post("/token")
                 .content("""
@@ -147,7 +148,7 @@ public class TypicalScenarioUserWantToSeeJobOffersIntegrationTest extends BaseIn
 
 
 
-        //7.użytkownik próbuje pobrać oferty z poprawnym tokenem w bazie nie ma ofert  otrzumuje 0 ofert status 200
+        //7. the user tries to download offers with a valid token in the database there are no offers, he receives 0 offers, status 200
         //given
         String token = response6.token();
         //when
@@ -167,7 +168,7 @@ public class TypicalScenarioUserWantToSeeJobOffersIntegrationTest extends BaseIn
                 () -> assertThat(mvcResultGet.getResponse().getStatus(), is(equalTo(200)))
         );
 
-        //8.w zewnętrznej bazie są 2 nowe oferty
+        //8.there are 2 new offers in the external database
         //given
         //when
         //then
@@ -179,7 +180,7 @@ public class TypicalScenarioUserWantToSeeJobOffersIntegrationTest extends BaseIn
                 )
         );
 
-        //9.apka odpytuje zewnętrzny serwer i dodaje nowe oferty
+        //9.scheduler queries the external server and adds new offers
         //given
         //when
         List<OfferDBResponseDto> jobResponse9 = offerFetcherScheduler.schedule();
@@ -188,7 +189,7 @@ public class TypicalScenarioUserWantToSeeJobOffersIntegrationTest extends BaseIn
         assertThat(jobResponse9.size(), is(equalTo(2)));
 
 
-        //10.Użytkownik próbuje pobrać nieistniejącą ofertę – otrzymuje 404 - not found
+        //10.The user tries to download a non-existent offer - he receives 404 - not found
         //given
         //when
         ResultActions performGetWithNotExistingId = mockMvc.perform(get("/offers/notexistingid")
@@ -205,7 +206,7 @@ public class TypicalScenarioUserWantToSeeJobOffersIntegrationTest extends BaseIn
                 () -> assertThat(errorResponse.status(), is(equalTo(HttpStatus.NOT_FOUND)))
         );
 
-        //11.Użytkownik probuje pobrać istniejącą ofertę – otrzymuje ją z kodem 200
+        //11.The user tries to download an existing offer - he receives it with the code 200
         //given
         String contentOfferJson11 = """
                 {
@@ -243,7 +244,7 @@ public class TypicalScenarioUserWantToSeeJobOffersIntegrationTest extends BaseIn
                 () -> assertThat(offerDBResponseDto.id(), is(not(emptyString())))
         );
 
-        //12.użytkownik wysyła zapytanie o oferty i otrzymuje oferty z kodem 200
+        //12.the user sends a request for offers and receives offers with the code 200
         //given
         //when
         ResultActions performGet12 = mockMvc.perform(get("/offers")
@@ -260,7 +261,7 @@ public class TypicalScenarioUserWantToSeeJobOffersIntegrationTest extends BaseIn
                 () -> assertThat(mvcResultGet12.getResponse().getStatus(), is(equalTo(200)))
         );
 
-        //13. użytkownik dodaje ofertę i otrzymuję ją w odpowiedzi z nadanym numerem id oraz otrzymuje status 201
+        //13.the user adds an offer and I receive it in response with the given id number and receives the status 201
         //given
         String contentOfferJson = """
                 {
@@ -291,7 +292,7 @@ public class TypicalScenarioUserWantToSeeJobOffersIntegrationTest extends BaseIn
                 () -> assertThat(mvcResultPost13.getResponse().getStatus(), is(equalTo(201)))
         );
 
-        //14.uzytkownik usuwa dodaną ofertę i otrzymuje status 204 no content oraz oferta zostaje usunięta.
+        //14.the user removes the added offer and receives the status 204 no content and the offer is removed.
         //given
         String offerIdToDelete = offerPostResult13.id(); //offerta z poprzedniego kroku 13.
 
@@ -320,6 +321,5 @@ public class TypicalScenarioUserWantToSeeJobOffersIntegrationTest extends BaseIn
                 () -> assertThat(errorResponse14.status(), is(equalTo(HttpStatus.NOT_FOUND)))
         );
 
-        //15.wylogowanie ręczne lub auto.
     }
 }
