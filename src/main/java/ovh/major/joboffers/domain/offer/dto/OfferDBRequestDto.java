@@ -14,8 +14,7 @@ public record OfferDBRequestDto(
 
         @Schema(
                 description = "Position",
-                example = "Junior Java Developer",
-                required = true
+                example = "Junior Java Developer"
         )
         @NotNull(message = "{position.null.validation.message}")
         @NotEmpty(message = "{position.empty.validation.message}")
@@ -23,8 +22,7 @@ public record OfferDBRequestDto(
 
         @Schema(
                 description = "Company name",
-                example = "Junior Java Developer Development Company LTD.",
-                required = true
+                example = "Junior Java Developer Development Company LTD."
         )
         @NotNull(message = "{company.null.validation.message}")
         @NotEmpty(message = "{company.empty.validation.message}")
@@ -32,8 +30,7 @@ public record OfferDBRequestDto(
 
         @Schema(
                 description = "Salary",
-                example = "8000 PLN - 9000 PLN",
-                required = true
+                example = "8000 PLN - 9000 PLN"
         )
         @NotNull(message = "{salary.null.validation.message}")
         @NotEmpty(message = "{salary.empty.validation.message}")
@@ -41,8 +38,7 @@ public record OfferDBRequestDto(
 
         @Schema(
                 description = "URL to Job Offer to external web service.",
-                example = "http://....",
-                required = true
+                example = "http://...."
         )
         @NotNull(message = "{url.null.validation.message}")
         @NotEmpty(message = "{url.empty.validation.message}")
