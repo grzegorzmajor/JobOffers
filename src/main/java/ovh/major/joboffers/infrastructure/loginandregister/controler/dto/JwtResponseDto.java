@@ -7,13 +7,15 @@ import lombok.Builder;
 public record JwtResponseDto (
 
         @Schema(
-                description = "Server-generated token"
+                description = "Server-generated token",
+                example = "userName"
         )
         String token,
 
 
         @Schema(
-                description = "User name"
+                description = "User name",
+                example = "pass"
         )
         String name
 ){
