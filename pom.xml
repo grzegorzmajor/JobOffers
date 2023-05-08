@@ -6,7 +6,7 @@
 
     <groupId>ovh.major</groupId>
     <artifactId>JobOffers</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -182,6 +182,7 @@
             </dependencies>
 
             <build>
+                <finalName>joboffer</finalName>
                 <plugins>
                     <plugin>
                         <groupId>org.springframework.boot</groupId>
