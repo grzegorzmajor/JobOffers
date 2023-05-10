@@ -2,6 +2,7 @@ version: '3.1'
 
 services:
   mongo:
+    container_name: mongo
     image: mongo:4.0.10
     restart: always
     ports:
@@ -24,6 +25,7 @@ services:
       ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/  # mongodb://{mongo-image-username}:{mongo-image-password}@{mongo-image-name}:{port}
 
   redis:
+    container_name: redis
     image: redis
     ports:
       - "53799:6379"
@@ -39,8 +41,8 @@ services:
 
   joboffer:
     container_name: joboffer
-#    build: .
-    image: joboffer-joboffer
+    #build: .
+    image: joboffers
     restart: always
     ports:
       - "8000:8080"
@@ -49,6 +51,9 @@ services:
       MONGO_PASSWORD: admin
       MONGO_HOST: mongo
       MONGO_PORT: 27017
-      MONGO_DB_NAME: lotto-web
+      MONGO_DB_NAME: offers
       MONGO_AUTH_SOURCE: admin
+      REDIS_HOST: redis
+      REDIS_PORT: 53799
+      JWT_SECRET: dupajasiutrzydniswiat
 
