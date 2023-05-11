@@ -26,9 +26,10 @@ services:
 
   redis:
     container_name: redis
+    hostname: redis
     image: redis
     ports:
-      - "53799:6379"
+      - "6379:6379"
     restart: always
 
   redis-commander:
@@ -54,6 +55,6 @@ services:
       MONGO_DB_NAME: offers
       MONGO_AUTH_SOURCE: admin
       REDIS_HOST: redis
-      REDIS_PORT: 53799
+      REDIS_PORT: 6379
       JWT_SECRET: dupajasiutrzydniswiat
 

@@ -32,8 +32,8 @@
 
         <java-jwt.version>4.0.0</java-jwt.version>
 
-        <redis.version>4.3.2</redis.version>
-        <spring-data-redis.version>3.0.4</spring-data-redis.version>
+        <redis.version>4.4.0</redis.version>
+        <spring-data-redis.version>3.0.5</spring-data-redis.version>
 
     </properties>
 
